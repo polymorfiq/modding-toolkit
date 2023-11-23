@@ -40,14 +40,16 @@ fn handle_client(mut stream: TcpStream) {
         let message = read_message(&mut stream).expect("Could not parse message");
 
         match message.trim() {
+            "" => (),
+            
             "quit" => {
                 println!("Client disconnected...");
                 break;
-            }
+            },
 
             "get_players" => {
                 stream.write(b"42\n").expect("Tried to write to TCP Stream");
-            }
+            },
 
             msg => println!("Unknown Message: {msg}")
         }
@@ -64,7 +66,12 @@ fn listen_for_connections() {
         println!("New TCP Connection...");
 
         match stream {
-            Ok(stream) => handle_client(stream),
+            Ok(stream) => {
+                thread::spawn(|| {
+                    handle_client(stream)
+                });
+            },
+
             _ => ()
         };
     }
