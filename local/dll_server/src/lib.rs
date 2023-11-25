@@ -55,11 +55,20 @@ fn handle_client(mut stream: TcpStream) {
             "get_game_state" => {
                 let g_objects = game::get_gobjects();
                 let g_names = game::get_gnames();
-                
-                unsafe {
-                    println!("GNAMES[0][0]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[0], *(*g_names.chunks[0])[0], g_names.get_fname_entry(0, 0).value());
-                    println!("GNAMES[0][1]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[1], *(*g_names.chunks[0])[1], g_names.get_fname_entry(0, 1).value());
-                    println!("GNAMES[0][2]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[2], *(*g_names.chunks[0])[2], g_names.get_fname_entry(0, 2).value());
+
+
+                for i in 0..(g_objects.num_elements.to_native()-1) {
+                    let obj = g_objects.item_at_idx(i as usize);
+
+                    if obj.is_some() {
+                        match obj.unwrap().object().name().entry() {
+                            Some(entry) => {
+                                println!("GOBJECTS[{:?}]: {:?}", i, entry.value());
+                            },
+
+                            None => ()
+                        }
+                    }
                 }
             }
 
