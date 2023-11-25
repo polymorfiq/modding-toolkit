@@ -56,8 +56,11 @@ fn handle_client(mut stream: TcpStream) {
                 let g_objects = game::get_gobjects();
                 let g_names = game::get_gnames();
                 
-                println!("GOBJECTS: {:?}", g_objects.objects_array);
-                println!("GNAMES: {:?}", g_names);
+                unsafe {
+                    println!("GNAMES[0][0]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[0], *(*g_names.chunks[0])[0], g_names.get_fname_entry(0, 0).value());
+                    println!("GNAMES[0][1]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[1], *(*g_names.chunks[0])[1], g_names.get_fname_entry(0, 1).value());
+                    println!("GNAMES[0][2]: {:?} - {:?} - {:?}", (*g_names.chunks[0])[2], *(*g_names.chunks[0])[2], g_names.get_fname_entry(0, 2).value());
+                }
             }
 
             "get_players" => {

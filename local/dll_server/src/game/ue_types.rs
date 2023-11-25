@@ -1,5 +1,6 @@
 use simple_endian::*;
-use core::ffi::c_void;
+use std::ffi::{c_void, CStr};
+use widestring::U16CString;
 
 const GOBJECTS_NUM_ELEMS_PER_CHUNK: u32 = 64 * 1024;
 
@@ -41,14 +42,81 @@ const TNAME_ENTRY_CHUNK_TABLE_SIZE: usize = (TNAME_ENTRY_FNAME_MAX_ENTRIES + TNA
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct TNameEntryArray {
-    chunks: [*mut *mut FNameEntry; TNAME_ENTRY_CHUNK_TABLE_SIZE],
-    num_elems: u32le,
-    num_chunks: u32le
+pub struct TNameEntryArray<'a> {
+    pub chunks: [&'a [*mut FNameEntryHeader; TNAME_ENTRY_ELEMS_PER_CHUNK]; TNAME_ENTRY_CHUNK_TABLE_SIZE],
+    pub num_elems: u32le,
+    pub num_chunks: u32le
+}
+
+const FNAME_HEADER_SIZE: isize = 12;
+impl<'a> TNameEntryArray<'a> {
+    pub fn get_fname_entry(&self, chunk: usize, idx: usize) -> FNameEntry {
+        let chunk = *self.chunks[chunk];
+        let header = unsafe { *chunk[idx] };
+
+        let value_ptr = unsafe { (chunk[idx] as *const u8).offset(FNAME_HEADER_SIZE) as *const i8 };
+        println!("{:?} + {:?} = {:?}", chunk[idx], FNAME_HEADER_SIZE, value_ptr);
+
+        FNameEntry {
+            header: header,
+            value_ptr: value_ptr
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
+pub struct FNameEntryHeader {
+    pub next_hash: *mut FNameEntryHeader,
+    name_idx: u32le
+}
+
+impl FNameEntryHeader {
+    pub fn idx(&self) -> u32 {
+        self.name_idx.to_native() >> 1
+    }
+}
+
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct FNameEntry {
-    something: u64
+    pub header: FNameEntryHeader,
+    value_ptr: *const i8
+}
+
+const FNAME_WIDE_FLAG: u32 = 0x1;
+impl FNameEntry {
+    pub fn is_wide(&self) -> bool {
+        self.header.name_idx.to_native() & FNAME_WIDE_FLAG > 0
+    }
+
+    pub fn value(&self) -> &CStr {
+        unsafe { CStr::from_ptr(self.value_ptr) }
+    }
+
+    pub fn wide_value(&self) -> U16CString {
+        unsafe { U16CString::from_ptr_str(self.value_ptr as *const u16) }
+    }
+
+    pub fn byte_len(&self) -> usize {
+        let mut len: usize = 0;
+
+        while unsafe { *((self.value_ptr as *const u8).offset(len as isize)) } != 0 {
+            if self.is_wide() {
+                len += 2;
+            } else {
+                len += 1;
+            }
+        }
+        
+        len
+    }
+
+    pub fn char_len(&self) -> usize {
+        if self.is_wide() {
+            self.byte_len() / 2
+        } else {
+            self.byte_len()
+        }
+    }
 }

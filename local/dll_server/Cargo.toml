@@ -13,4 +13,5 @@ ctor = "0.1.25"
 retour = "0.1.0"
 windows = "0.44.0"
 simple_endian = "0.2.1"
+widestring = "1.0.2"
 winapi = { version = "0.3.9", features = ["winuser","libloaderapi"] }
