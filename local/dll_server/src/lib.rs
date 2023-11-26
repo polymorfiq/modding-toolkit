@@ -73,7 +73,7 @@ fn handle_client(mut stream: TcpStream) {
 
                     if object.is_some() {
                         let obj = object.unwrap();
-                        writeln!(file, "GOBJECTS[{:?}]: {:?}", i, obj.get_full_name()).unwrap();
+                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.get_full_name(), obj.class().config_name.to_string()).unwrap();
                     }
                 }
             }

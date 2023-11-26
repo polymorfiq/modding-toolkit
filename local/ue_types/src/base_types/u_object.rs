@@ -4,7 +4,6 @@ use std::ffi::c_void;
 use super::{FName, UClass};
 
 const GOBJECTS_NUM_ELEMS_PER_CHUNK: usize = 64 * 1024;
-
 pub mod object_flags {
     pub const NONE: u32 = 0;
 	pub const REACHABLE_IN_CLUSTER: u32 = 1 << 23; // External reference to object in cluster exists
@@ -19,19 +18,62 @@ pub mod object_flags {
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
+pub struct UObject {
+    // Size: 0x30
+    base: UObjectBase
+}
+
+impl UObject {
+    pub fn name(&self) -> FName {
+        self.base.name_private
+    }
+
+    pub fn class(&self) -> &UClass {
+        unsafe { self.base.class_private.as_ref::<'static>().unwrap() }
+    }
+
+    pub fn outer(&self) -> Option<UObject> {
+        if self.base.outer_private != std::ptr::null() {
+            Some(unsafe { *self.base.outer_private })
+        } else {
+            None
+        }
+    }
+
+    pub fn get_full_name(&self) -> String {
+        let my_name = self.name();
+        let my_name_string = match my_name.to_string() {
+            Some(name) => name,
+            None => "?".to_string()
+        };
+
+        match self.outer() {
+            Some(outer) => {
+                [outer.get_full_name(), my_name_string].join(".")
+            }
+
+            None => my_name_string
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
 pub struct FUObjectArray {
+    // Size: 0x130
     obj_first_gc_idx: u32le,
     obj_last_non_gc_idx: u32le,
     max_objects_not_considered_by_gc: u32le,
     open_for_disregard_for_gc: u8,
     _padding: [u8; 3],
     pub objects_array: FChunkedFixedUObjectArray,
-    various_data: [u8; 990]
+    various_data: [u8; 0x100] // 0x30
 }
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FChunkedFixedUObjectArray {
+    // Size: 0x20
     pub objects: *const *const FUObjectItem,
     pub pre_allocated_objects: *const FUObjectItem,
     pub max_elements: u32le,
@@ -63,14 +105,15 @@ impl FChunkedFixedUObjectArray {
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FUObjectItem {
-    pub object_addr: *mut UObjectBase,
+    // Size: 0x14
+    pub object_addr: *mut UObject,
     pub flags: u32,
     pub cluster_root_idx: u32,
     pub serial_number: u32
 }
 
 impl FUObjectItem {
-    pub fn object(&self) -> Option<UObjectBase> {
+    pub fn object(&self) -> Option<UObject> {
         if (self.object_addr as *const c_void) == std::ptr::null() {
             None
         } else {
@@ -85,39 +128,13 @@ impl FUObjectItem {
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct UObjectBase {
+struct UObjectBase {
+    // Size: 0x30
     __vf_table: *mut c_void,
     pub obj_flags: u32,
     internal_idx: u32le,
     pub class_private: *mut UClass,
     name_private: FName,
     _padding: [u8; 4],
-    outer_private: *const UObjectBase
-}
-
-impl UObjectBase {
-    pub fn name(&self) -> FName {
-        self.name_private
-    }
-
-    pub fn outer(&self) -> Option<UObjectBase> {
-        if self.outer_private != std::ptr::null() {
-            Some(unsafe { *self.outer_private })
-        } else {
-            None
-        }
-    }
-
-    pub fn get_full_name(&self) -> String {
-        let my_name = self.name();
-        let my_name_str = my_name.entry().unwrap().value().to_str().unwrap().to_string();
-
-        match self.outer() {
-            Some(outer) => {
-                [outer.get_full_name(), my_name_str].join(".")
-            }
-
-            None => my_name_str
-        }
-    }
+    outer_private: *const UObject
 }

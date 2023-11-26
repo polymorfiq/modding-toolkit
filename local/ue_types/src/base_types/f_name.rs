@@ -13,12 +13,23 @@ const FNAME_WIDE_FLAG: u32 = 0x1;
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FName {
+    // Size: 0x0C
     comparison_idx: u32le,
     display_idx: u32le,
     pub number: u32be
 }
 
 impl FName {
+    pub fn to_string(self) -> Option<String> {
+        let entry_ptr = GameBase::singleton().get_display_name(&self);
+
+        if (entry_ptr as *const c_void) == std::ptr::null() {
+            None
+        } else {
+            FNameEntry::from_header_ptr(entry_ptr).string_value()
+        }
+    }
+
     pub fn entry(self) -> Option<FNameEntry> {
         let entry_ptr = GameBase::singleton().get_display_name(&self);
 
@@ -70,6 +81,18 @@ impl FNameEntry {
     
     pub fn is_wide(&self) -> bool {
         self.header.name_idx.to_native() & FNAME_WIDE_FLAG > 0
+    }
+
+    pub fn string_value(&self) -> Option<String> {
+        let c_str = unsafe { CStr::from_ptr(self.value_ptr) };
+        let str_val = c_str.to_str();
+
+        if str_val.is_ok() {
+            let str_slice: &str = str_val.unwrap();
+            Some(str_slice.to_owned())
+        } else {
+            None
+        }
     }
 
     pub fn value(&self) -> &CStr {
