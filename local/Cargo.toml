@@ -1,0 +1,12 @@
+[workspace]
+
+members = [
+    "dll_client",
+    "dll_server",
+    "ue_types",
+    "injection_utils"
+]
+
+[workspace.dependencies]
+ue_types = { path = "./ue_types" }
+injection_utils = { path = "./injection_utils" }

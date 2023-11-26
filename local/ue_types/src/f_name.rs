@@ -1,19 +1,33 @@
 use simple_endian::*;
-use std::ffi::{c_void, CStr};
+use std::ffi::{CStr, c_void};
 use widestring::U16CString;
 
-const FNAME_HEADER_SIZE: isize = 12;
+use super::GameBase;
+
+pub const FNAME_HEADER_SIZE: isize = 12;
 const FNAME_WIDE_FLAG: u32 = 0x1;
-const TNAME_ENTRY_FNAME_MAX_ENTRIES: usize = 4 * 1024 * 1024;
-const TNAME_ENTRY_ELEMS_PER_CHUNK: usize = 16384;
-const TNAME_ENTRY_CHUNK_TABLE_SIZE: usize = (TNAME_ENTRY_FNAME_MAX_ENTRIES + TNAME_ENTRY_ELEMS_PER_CHUNK - 1) / TNAME_ENTRY_ELEMS_PER_CHUNK;
+// const TNAME_ENTRY_FNAME_MAX_ENTRIES: isize = 4 * 1024 * 1024;
+// const TNAME_ENTRY_ELEMS_PER_CHUNK: isize = 16384;
+// const TNAME_ENTRY_CHUNK_TABLE_SIZE: isize = (TNAME_ENTRY_FNAME_MAX_ENTRIES + TNAME_ENTRY_ELEMS_PER_CHUNK - 1) / TNAME_ENTRY_ELEMS_PER_CHUNK;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FName {
     comparison_idx: u32le,
     display_idx: u32le,
-    number: u32
+    pub number: u32be
+}
+
+impl FName {
+    pub fn entry(self) -> Option<FNameEntry> {
+        let entry_ptr = GameBase::singleton().get_display_name(&self);
+
+        if (entry_ptr as *const c_void) == std::ptr::null() {
+            None
+        } else {
+            Some(FNameEntry::from_header_ptr(entry_ptr))
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -22,31 +36,6 @@ pub struct TNameEntryArray {
     pub chunks: *mut *mut FNameEntryHeader,
     pub num_elems: u32le,
     pub num_chunks: u32le
-}
-
-impl TNameEntryArray {
-    pub fn entry_for_fname(&self, name: FName) -> Option<FNameEntry> {
-        self.entry_at_idx(name.display_idx.to_native() as usize)
-    }
-
-    pub fn entry_at_idx(&self, idx: usize) -> Option<FNameEntry> {
-        let chunk_idx = idx / TNAME_ENTRY_ELEMS_PER_CHUNK;
-        let elem_idx = idx % TNAME_ENTRY_ELEMS_PER_CHUNK;
-
-        self.get_entry(chunk_idx, elem_idx)
-    }
-
-    pub fn get_entry(&self, chunk: usize, elem_idx: usize) -> Option<FNameEntry> {
-        let chunk = unsafe { *self.chunks.offset(chunk as isize) };
-        let header = unsafe { *chunk.offset(elem_idx as isize) };
-
-        let value_ptr = unsafe { (chunk.offset(elem_idx as isize) as *const u8).offset(FNAME_HEADER_SIZE) as *const i8 };
-
-        Some(FNameEntry {
-            header: header,
-            value_ptr: value_ptr
-        })
-    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -62,7 +51,7 @@ impl FNameEntryHeader {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FNameEntry {
     pub header: FNameEntryHeader,
@@ -70,6 +59,15 @@ pub struct FNameEntry {
 }
 
 impl FNameEntry {
+    pub fn from_header_ptr(entry_ptr: *const FNameEntryHeader) -> Self {
+        let value_ptr = unsafe { entry_ptr.byte_offset(FNAME_HEADER_SIZE) as *const i8 };
+
+        Self {
+            header: unsafe { *entry_ptr },
+            value_ptr: value_ptr
+        }
+    }
+    
     pub fn is_wide(&self) -> bool {
         self.header.name_idx.to_native() & FNAME_WIDE_FLAG > 0
     }

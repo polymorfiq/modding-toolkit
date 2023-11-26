@@ -12,9 +12,9 @@ use directories::BaseDirs;
 use ue_types::GameBase;
 
 const MESSAGE_SIZE: usize = 1;
-const OFFSET_FUNC_GETNAMES: isize = 0xf08e80;
-const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
-const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
+const OFFSET_FUNC_GETNAMES: isize = 0x10E94B0;
+const OFFSET_STRUCT_GOBJECTS: isize = 0x753EC50;
+const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0x10E9440;
 
 fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8Error> {
     // Store all the bytes for our received String
@@ -44,7 +44,7 @@ fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8E
 }
 
 fn handle_client(mut stream: TcpStream) {
-    let log_path = format!("{}\\game-manager-log-server.log", BaseDirs::new().unwrap().home_dir().to_str().unwrap());
+    let log_path = format!("{}\\game-manager-log-client.log", BaseDirs::new().unwrap().home_dir().to_str().unwrap());
     let mut file = OpenOptions::new()
     .write(true)
     .truncate(true)
