@@ -2,7 +2,7 @@ use simple_endian::*;
 use std::ffi::{CStr, c_void};
 use widestring::U16CString;
 
-use super::GameBase;
+use crate::GameBase;
 
 pub const FNAME_HEADER_SIZE: isize = 12;
 const FNAME_WIDE_FLAG: u32 = 0x1;

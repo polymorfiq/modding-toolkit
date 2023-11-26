@@ -5,6 +5,18 @@ use super::{FName, UClass};
 
 const GOBJECTS_NUM_ELEMS_PER_CHUNK: usize = 64 * 1024;
 
+pub mod object_flags {
+    pub const NONE: u32 = 0;
+	pub const REACHABLE_IN_CLUSTER: u32 = 1 << 23; // External reference to object in cluster exists
+	pub const CLUSTER_ROOT: u32 = 1 << 24; // Root of a cluster
+	pub const NATIVE: u32 = 1 << 25; // Native (UClass only). 
+	pub const ASYNC_ONLY: u32 = 1 << 26; // Object exists only on a different thread than the game thread.
+	pub const ASYNC_LOADING: u32 = 1 << 27; // Object is being asynchronously loaded.
+	pub const UNREACHABLE: u32 = 1 << 28; // Object is not reachable on the object graph.
+	pub const PENDING_KILL: u32 = 1 << 29; // Objects that are pending destruction (invalid for gameplay but valid objects)
+	pub const ROOT_SET: u32 = 1 << 30; // Object will not be garbage collected, even if unreferenced.
+}
+
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FUObjectArray {
@@ -20,8 +32,8 @@ pub struct FUObjectArray {
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FChunkedFixedUObjectArray {
-    pub objects: *mut *mut FUObjectItem,
-    pub pre_allocated_objects: *mut FUObjectItem,
+    pub objects: *const *const FUObjectItem,
+    pub pre_allocated_objects: *const FUObjectItem,
     pub max_elements: u32le,
     pub num_elements: u32le,
     pub max_chunks: u32le,
@@ -51,7 +63,7 @@ impl FChunkedFixedUObjectArray {
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FUObjectItem {
-    object: *mut UObjectBase,
+    pub object_addr: *mut UObjectBase,
     pub flags: u32,
     pub cluster_root_idx: u32,
     pub serial_number: u32
@@ -59,11 +71,15 @@ pub struct FUObjectItem {
 
 impl FUObjectItem {
     pub fn object(&self) -> Option<UObjectBase> {
-        if (self.object as *const c_void) == std::ptr::null() {
+        if (self.object_addr as *const c_void) == std::ptr::null() {
             None
         } else {
-            unsafe { Some(*self.object) }
+            unsafe { Some(*self.object_addr) }
         }
+    }
+
+    pub fn is_root_set(&self) -> bool {
+        self.flags & object_flags::ROOT_SET > 0
     }
 }
 

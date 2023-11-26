@@ -1,25 +1,24 @@
 #![feature(pointer_byte_offsets)]
 use core::ffi::c_void;
 
-pub mod f_name;
-pub use f_name::{FName, FNameEntry, FNameEntryHeader, TNameEntryArray};
-
-pub mod u_object;
-pub use u_object::{UObjectBase, FUObjectArray, FChunkedFixedUObjectArray};
-
-pub mod u_class;
-pub use u_class::{UClass};
+pub mod base_types;
+pub use base_types::*;
 
 use injection_utils::InjectionBase;
 
 #[derive(Debug, Copy, Clone)]
-pub struct GameBase {}
+pub struct GameBase {
+    addr_game_instance: *const UGameInstance<'static>,
+}
 
 static mut GAME_BASE: GameBase = GameBase::empty();
+const GAME_INSTANCE_GOBJECTS_IDX: isize = 79;
 
 impl GameBase {
     pub const fn empty() -> Self {
-        Self {}
+        Self {
+            addr_game_instance: std::ptr::null()
+        }
     }
 
     pub fn generate(
@@ -43,7 +42,20 @@ impl GameBase {
             addr_func_get_display_name: addr_get_display_name
         });
 
-        Self{}
+        let mut generated = Self::empty();
+        generated.initialize();
+
+        generated
+    }
+
+    pub fn initialize(&mut self) {
+        let game_instance_item = self.gobjects().item_at_idx(GAME_INSTANCE_GOBJECTS_IDX as usize).expect("Failed to find GameInstance");
+        let game_instance_obj = game_instance_item.object().expect("Unable to unwrap GameInstance object");
+        if game_instance_obj.name().entry().unwrap().value().to_str() != Ok("GameInstance") {
+            panic!("Picked wrong GObject out of GObjects - expected GameInstance!");
+        }
+
+        self.addr_game_instance = game_instance_item.object_addr as *const UGameInstance;
     }
 
     pub fn singleton() -> &'static Self {
@@ -65,6 +77,14 @@ impl GameBase {
     pub fn gnames(&self) -> TNameEntryArray {
         let ptr = InjectionBase::singleton().addr_gnames as *const TNameEntryArray;
         unsafe { *ptr }
+    }
+
+    pub fn game_instance(&self) -> &'static UGameInstance {
+        unsafe { self.addr_game_instance.as_ref::<'static>().unwrap() }
+    }
+
+    pub fn world(&self) -> &'static UWorld {
+        self.game_instance().world()
     }
 
     pub fn get_display_name(&self, f_name: &FName) -> *const FNameEntryHeader {

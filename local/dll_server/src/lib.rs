@@ -15,6 +15,7 @@ const MESSAGE_SIZE: usize = 1;
 const OFFSET_FUNC_GETNAMES: isize = 0xf08e80;
 const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
 const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
+// const OFFSET_FUNC_ULEVEL_GET_ACTORS: isize = 0x3F95240;
 
 fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8Error> {
     // Store all the bytes for our received String
@@ -75,6 +76,29 @@ fn handle_client(mut stream: TcpStream) {
                         writeln!(file, "GOBJECTS[{:?}]: {:?}", i, obj.get_full_name()).unwrap();
                     }
                 }
+            }
+
+            "get_root_objects" => {
+                let g_objects = GameBase::singleton().gobjects();
+
+                for i in 0..(g_objects.num_elements.to_native()-1) {
+                    let item = g_objects.item_at_idx(i as usize);
+                    let object = if item.is_some() && item.unwrap().is_root_set() { item.unwrap().object() } else { None };
+
+                    if object.is_some() {
+                        let obj = object.unwrap();
+                        
+                        println!("ROOT_SET[{:?}]: {:?}", i, obj.get_full_name());
+                    }
+                }
+            }
+
+            "get_actors" => {
+                let world = GameBase::singleton().world();
+                let level = world.level();
+                let actor = level.actors();
+                
+                println!("Actor: {:p} {:p} {:p}", world, level, actor);
             }
 
             "get_players" => {
