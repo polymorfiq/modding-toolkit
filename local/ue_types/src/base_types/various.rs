@@ -3,13 +3,6 @@ use std::marker::PhantomData;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct FStructBaseChain {
-    // Size: 0x4
-    num_struct_bases_in_chain_minus_one: u32le
-}
-
-#[derive(Debug, Copy, Clone)]
-#[repr(C)]
 pub struct TArray<T> {
     // Size: 0x10
     allocator_instance: *const T,

@@ -1,6 +1,5 @@
 use simple_endian::*;
-use std::ffi::c_void;
-use crate::{FStructBaseChain, TArray, UField, UProperty};
+use crate::{TArray, UField, UObject, UProperty};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
@@ -12,10 +11,19 @@ pub struct UStruct {
     children: *const UField,
     property_size: u32le,
     min_alignment: u32le,
-    script: *const TArray<u8>,
+    script: TArray<u8>,
     property_link: *const UProperty,
     ref_link: *const UProperty,
     destructor_link: *const UProperty,
     post_construct_link: *const UProperty,
-    script_object_references: *const TArray<c_void>,
+    script_object_references: TArray<*const UObject>,
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FStructBaseChain {
+    // Size: 0x4
+    struct_base_chain_array: *const *const FStructBaseChain,
+    num_struct_bases_in_chain_minus_one: u32le,
+    _padding: [u8; 4]
 }

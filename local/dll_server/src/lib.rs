@@ -73,7 +73,9 @@ fn handle_client(mut stream: TcpStream) {
 
                     if object.is_some() {
                         let obj = object.unwrap();
-                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.get_full_name(), obj.class().config_name.to_string()).unwrap();
+                        let default_obj = obj.class().default_object();
+                        let default_obj_name = if default_obj.is_some() { default_obj.unwrap().get_full_name() } else { "".to_string() };
+                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.get_full_name(), default_obj_name).unwrap();
                     }
                 }
             }
