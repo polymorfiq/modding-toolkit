@@ -1,15 +1,17 @@
 use std::marker::PhantomData;
-use super::UWorld;
+use crate::{TArray, ULocalPlayer, UObject, UnknownType};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct UGameInstance<'a> {
-    world_addr: *const UWorld<'a>,
-    _phantom: PhantomData<&'a u8>
+    base_object: UObject,
+    world_context: *const UnknownType,
+    local_players: TArray<*const ULocalPlayer>,
+    online_session: *const UnknownType,
+    referenced_objects: TArray<*const UObject>,
+    _phantom: PhantomData<&'a u8>,
+    // More stuff...
 }
 
 impl<'a> UGameInstance<'a> {
-    pub fn world(&self) -> &'a UWorld {
-        unsafe { self.world_addr.as_ref::<'a>().unwrap() }
-    }
 }

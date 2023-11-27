@@ -21,8 +21,31 @@ pub struct TMap<K, V> {
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct UProperty {}
+pub struct UnknownType {}
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct UnknownType {}
+pub struct TEnumAsByte<T> {
+    data: u8,
+    _phantom_a: PhantomData<T>
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct TWeakObjectPtr<T> {
+    ptr: u64,
+    _phantom: PhantomData<T>
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct TSubclassOf<T> {
+    ptr: u64,
+    _phantom: PhantomData<T>
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct TBaseDynamicMulticastDelegate {
+    _unknown: [u8; 0x10]
+}

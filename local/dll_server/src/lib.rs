@@ -73,9 +73,7 @@ fn handle_client(mut stream: TcpStream) {
 
                     if object.is_some() {
                         let obj = object.unwrap();
-                        let default_obj = obj.class().default_object();
-                        let default_obj_name = if default_obj.is_some() { default_obj.unwrap().get_full_name() } else { "".to_string() };
-                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.get_full_name(), default_obj_name).unwrap();
+                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().full_name()).unwrap();
                     }
                 }
             }
@@ -90,17 +88,9 @@ fn handle_client(mut stream: TcpStream) {
                     if object.is_some() {
                         let obj = object.unwrap();
                         
-                        println!("ROOT_SET[{:?}]: {:?}", i, obj.get_full_name());
+                        println!("ROOT_SET[{:?}]: {:?}", i, obj.full_name());
                     }
                 }
-            }
-
-            "get_actors" => {
-                let world = GameBase::singleton().world();
-                let level = world.level();
-                let actor = level.actors();
-                
-                println!("Actor: {:p} {:p} {:p}", world, level, actor);
             }
 
             "get_players" => {

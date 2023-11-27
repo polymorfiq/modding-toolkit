@@ -7,3 +7,7 @@ pub struct UField {
     base_object: UObject,
     next: *const UField
 }
+
+impl UField {
+    pub fn object(&self) -> UObject { self.base_object }
+}

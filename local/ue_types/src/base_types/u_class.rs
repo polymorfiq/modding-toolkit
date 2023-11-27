@@ -14,7 +14,7 @@ pub struct UClass {
     class_cast_flags: u64,
     class_within: *const UClass,
     class_generated_by: *const UObject,
-    pub config_name: FName, // 236
+    pub config_name: FName, // 0xD8
     class_reps: TArray<UnknownType>, // 248
     net_fields: TArray<UField>,
     class_default_object: *const UObject, // 264
@@ -28,6 +28,10 @@ pub struct UClass {
 }
 
 impl UClass {
+    pub fn base_struct(&self) -> UStruct { self.base_struct }
+    pub fn name(&self) -> FName { self.base_struct().field().object().name() }
+    pub fn full_name(&self) -> String { self.base_struct().field().object().full_name() }
+
     pub fn unique(&self) -> u32 {
         self.class_unique_and_cooked >> 1
     }

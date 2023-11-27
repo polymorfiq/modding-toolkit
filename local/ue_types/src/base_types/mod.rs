@@ -19,8 +19,17 @@ pub use u_level::ULevel;
 pub mod a_actor;
 pub use a_actor::AActor;
 
+pub mod a_controller;
+pub use a_controller::{AController, APlayerController};
+
 pub mod u_field;
 pub use u_field::UField;
+
+pub mod u_property;
+pub use u_property::UProperty;
+
+pub mod u_player;
+pub use u_player::{UPlayer, ULocalPlayer};
 
 pub mod u_struct;
 pub use u_struct::UStruct;

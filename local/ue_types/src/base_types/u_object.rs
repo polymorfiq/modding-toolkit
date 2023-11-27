@@ -40,7 +40,7 @@ impl UObject {
         }
     }
 
-    pub fn get_full_name(&self) -> String {
+    pub fn full_name(&self) -> String {
         let my_name = self.name();
         let my_name_string = match my_name.to_string() {
             Some(name) => name,
@@ -49,7 +49,7 @@ impl UObject {
 
         match self.outer() {
             Some(outer) => {
-                [outer.get_full_name(), my_name_string].join(".")
+                [outer.full_name(), my_name_string].join(".")
             }
 
             None => my_name_string

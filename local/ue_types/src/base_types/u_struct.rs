@@ -19,6 +19,11 @@ pub struct UStruct {
     script_object_references: TArray<*const UObject>,
 }
 
+impl UStruct {
+    pub fn field(&self) -> UField { self.base_field }
+    pub fn chain(&self) -> FStructBaseChain { self.base_chain }
+}
+
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FStructBaseChain {

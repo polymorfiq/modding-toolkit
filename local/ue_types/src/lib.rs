@@ -83,10 +83,6 @@ impl GameBase {
         unsafe { self.addr_game_instance.as_ref::<'static>().unwrap() }
     }
 
-    pub fn world(&self) -> &'static UWorld {
-        self.game_instance().world()
-    }
-
     pub fn get_display_name(&self, f_name: &FName) -> *const FNameEntryHeader {
         let get_display_name: fn(*const FName) -> *const FNameEntryHeader = unsafe {
             std::mem::transmute(InjectionBase::singleton().addr_func_get_display_name)
