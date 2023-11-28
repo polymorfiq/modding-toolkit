@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 use crate::{FName, TArray, TMap, UField, UObject, UStruct, UnknownType};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct UClass {
     // Size: 0x210
@@ -28,7 +28,7 @@ pub struct UClass {
 }
 
 impl UClass {
-    pub fn base_struct(&self) -> UStruct { self.base_struct }
+    pub fn base_struct(&self) -> &UStruct { &self.base_struct }
     pub fn name(&self) -> FName { self.base_struct().field().object().name() }
     pub fn full_name(&self) -> String { self.base_struct().field().object().full_name() }
 

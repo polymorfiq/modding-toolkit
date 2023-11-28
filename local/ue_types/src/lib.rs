@@ -9,15 +9,18 @@ use injection_utils::InjectionBase;
 #[derive(Debug, Copy, Clone)]
 pub struct GameBase {
     addr_game_instance: *const UGameInstance<'static>,
+    addr_world: *const UWorld<'static>,
 }
 
 static mut GAME_BASE: GameBase = GameBase::empty();
-const GAME_INSTANCE_GOBJECTS_IDX: isize = 79;
+const GOBJECTS_IDX_GAME_INSTANCE: isize = 79;
+const GOBJECTS_IDX_WORLD: isize = 301;
 
 impl GameBase {
     pub const fn empty() -> Self {
         Self {
-            addr_game_instance: std::ptr::null()
+            addr_game_instance: std::ptr::null(),
+            addr_world: std::ptr::null()
         }
     }
 
@@ -49,13 +52,23 @@ impl GameBase {
     }
 
     pub fn initialize(&mut self) {
-        let game_instance_item = self.gobjects().item_at_idx(GAME_INSTANCE_GOBJECTS_IDX as usize).expect("Failed to find GameInstance");
+        let game_instance_item = self.gobjects().item_at_idx(GOBJECTS_IDX_GAME_INSTANCE as usize).expect("Failed to find GameInstance");
         let game_instance_obj = game_instance_item.object().expect("Unable to unwrap GameInstance object");
-        if game_instance_obj.name().entry().unwrap().value().to_str() != Ok("GameInstance") {
-            panic!("Picked wrong GObject out of GObjects - expected GameInstance!");
+        let game_instance_name = game_instance_obj.name().to_string();
+        if game_instance_name != Some("GameInstance".to_string()) {
+            panic!("Picked wrong GObject out of GObjects - expected GameInstance but got {:?}!", game_instance_name);
         }
 
         self.addr_game_instance = game_instance_item.object_addr as *const UGameInstance;
+
+        let world_item = self.gobjects().item_at_idx(GOBJECTS_IDX_WORLD as usize).expect("Failed to find World");
+        let world_obj = world_item.object().expect("Unable to unwrap World object");
+        let world_name = world_obj.name().to_string();
+        if world_name != Some("World".to_string()) {
+            panic!("Picked wrong GObject out of GObjects - expected World but got {:?}!", world_name);
+        }
+
+        self.addr_world = world_item.object_addr as *const UWorld;
     }
 
     pub fn singleton() -> &'static Self {
@@ -81,6 +94,10 @@ impl GameBase {
 
     pub fn game_instance(&self) -> &'static UGameInstance {
         unsafe { self.addr_game_instance.as_ref::<'static>().unwrap() }
+    }
+
+    pub fn world(&self) -> &'static UWorld {
+        unsafe { self.addr_world.as_ref::<'static>().unwrap() }
     }
 
     pub fn get_display_name(&self, f_name: &FName) -> *const FNameEntryHeader {

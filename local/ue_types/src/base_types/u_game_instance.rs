@@ -1,11 +1,11 @@
 use std::marker::PhantomData;
-use crate::{TArray, ULocalPlayer, UObject, UnknownType};
+use crate::{FName, FWorldContext, TArray, ULocalPlayer, UObject, UnknownType};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct UGameInstance<'a> {
     base_object: UObject,
-    world_context: *const UnknownType,
+    world_context: *const FWorldContext<'a>,
     local_players: TArray<*const ULocalPlayer>,
     online_session: *const UnknownType,
     referenced_objects: TArray<*const UObject>,
@@ -14,4 +14,9 @@ pub struct UGameInstance<'a> {
 }
 
 impl<'a> UGameInstance<'a> {
+    pub fn object(&self) -> UObject { self.base_object }
+    pub fn name(&self) -> FName { self.object().name() }
+    pub fn full_name(&self) -> String { self.object().full_name() }
+    pub fn local_players(&self) -> TArray<*const ULocalPlayer> { self.local_players }
+    pub fn world_context(&self) -> FWorldContext { unsafe { *self.world_context } }
 }

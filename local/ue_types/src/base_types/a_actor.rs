@@ -1,6 +1,6 @@
 use crate::{FName, TArray, TBaseDynamicMulticastDelegate, TEnumAsByte, TWeakObjectPtr, UObject, UnknownType};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct AActor {
     // Size: 0x0330
@@ -56,6 +56,12 @@ pub struct AActor {
     instance_components: TArray<UnknownType>,
     blueprint_created_components: TArray<UnknownType>,
     _unknown_b: [u8; 0x10]
+}
+
+impl AActor {
+    pub fn object(&self) -> UObject { self.base_object }
+    pub fn name(&self) -> FName { self.object().name() }
+    pub fn full_name(&self) -> String { self.object().full_name() }
 }
 
 

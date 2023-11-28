@@ -1,13 +1,37 @@
 use simple_endian::*;
 use std::marker::PhantomData;
+use widestring::{WideString, WideChar, U16String};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct TArray<T> {
     // Size: 0x10
-    allocator_instance: *const T,
-    array_num: u32le,
-    array_max: u32le
+    data: *const T,
+    array_num: u32be,
+    array_max: u32be
+}
+
+impl<T: Copy> TArray<T> {
+    pub fn at_index<'b>(&self, idx: usize) -> Option<T> {
+        if idx < self.array_num.to_native() as usize {
+            unsafe { Some(*self.data.offset(idx as isize)) }
+        } else {
+            None
+        }
+    }
+}
+
+impl<T> TArray<T> {
+    pub fn ref_at_index<'b>(&self, idx: usize) -> Option<&'b T> {
+        if idx < self.array_num.to_native() as usize {
+            unsafe { self.data.offset(idx as isize).as_ref::<'b>() }
+        } else {
+            None
+        }
+    }
+
+    pub fn len(&self) -> usize { self.array_num.to_native() as usize }
+    pub fn max_size(&self) -> usize { self.array_max.to_native() as usize }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -30,6 +54,10 @@ pub struct TEnumAsByte<T> {
     _phantom_a: PhantomData<T>
 }
 
+impl<T> TEnumAsByte<T> {
+    pub fn data(&self) -> u8 { self.data }
+}
+
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct TWeakObjectPtr<T> {
@@ -48,4 +76,50 @@ pub struct TSubclassOf<T> {
 #[repr(C)]
 pub struct TBaseDynamicMulticastDelegate {
     _unknown: [u8; 0x10]
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FURL {
+    // Size: 0x68
+    protocol: FString,
+    host: FString,
+    port: u32le,
+    valid: u32le,
+    map: FString,
+    redirect_url: FString,
+    op: TArray<FString>,
+    portal: FString
+}
+
+impl FURL {
+    pub fn protocol(&self) -> &FString { &self.protocol }
+    pub fn host(&self) -> &FString { &self.host }
+    pub fn port(&self) -> u32 { self.port.to_native() }
+    pub fn valid(&self) -> u32 { self.valid.to_native() }
+    pub fn map(&self) -> &FString { &self.map }
+    pub fn redirect_url(&self) -> &FString { &self.redirect_url }
+    pub fn op(&self) -> &TArray<FString> { &self.op }
+    pub fn portal(&self) -> &FString { &self.portal }
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FString {
+    // Size: 0x10
+    data: TArray<WideChar>
+}
+
+impl FString {
+    pub fn to_string (&self) -> String { self.to_wide_string().to_string().unwrap() }
+    pub fn to_wide_string(&self) -> U16String {
+        let mut chars: Vec<WideChar> = vec![];
+
+        for i in 0..self.data.len() {
+            let curr = self.data.at_index(i).unwrap();
+            chars.push(curr);
+        }
+
+        WideString::from_vec(chars)
+    }
 }

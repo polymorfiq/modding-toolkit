@@ -1,7 +1,7 @@
 use simple_endian::*;
 use crate::{TArray, UField, UObject, UProperty};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct UStruct {
     // Size: 0xA0

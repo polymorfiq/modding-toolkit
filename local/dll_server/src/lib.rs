@@ -9,13 +9,53 @@ use std::fs::OpenOptions;
 extern crate directories;
 use directories::BaseDirs;
 
-use ue_types::GameBase;
+use ue_types::*;
 
 const MESSAGE_SIZE: usize = 1;
 const OFFSET_FUNC_GETNAMES: isize = 0xf08e80;
 const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
 const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
 // const OFFSET_FUNC_ULEVEL_GET_ACTORS: isize = 0x3F95240;
+
+#[ctor::ctor]
+fn ctor() {
+    let base_addr = unsafe { GetModuleHandleA(std::ptr::null()) as *const c_void };
+    let game_base = GameBase::generate(
+        base_addr,
+        OFFSET_STRUCT_GOBJECTS,
+        OFFSET_FUNC_GETNAMES,
+        OFFSET_FUNC_GET_DISPLAY_NAME
+    );
+
+    let game_base = GameBase::set_singleton(game_base);
+    
+    println!("Injected - Game Base: {:?}", GameBase::singleton());
+    println!("UField: {:#01x?}", std::mem::size_of::<UField>());
+    println!("UProperty: {:#01x?}", std::mem::size_of::<UProperty>());
+    println!("UObject: {:#01x?}", std::mem::size_of::<UObject>());
+    println!("AActor: {:#01x?}", std::mem::size_of::<AActor>());
+    println!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
+    println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
+    println!("Local Player: {:?}", unsafe { *game_base.game_instance().local_players().at_index(0).unwrap() });
+    println!("Local Player Name: {:?}", unsafe { (*game_base.game_instance().local_players().at_index(0).unwrap()).full_name() });
+    println!("World: {:#01x?}", game_base.world());
+    println!("Level: {:#01x?}", game_base.world().persistent_level());
+    println!("Level Name: {:#01x?}", game_base.world().persistent_level().full_name());
+    println!("Level (Actors Length): {:?}", game_base.world().persistent_level().actors().len());
+
+    let actors = game_base.world().persistent_level().actors();
+    println!("Actor[0] addr: {:#01x?}", actors.at_index(0).unwrap() );
+    println!("Actor[0]: {:?}", unsafe { actors.at_index(0).unwrap().as_ref::<'static>().unwrap().full_name() } );
+
+
+    println!("Starting TCP backdoor....");
+
+    thread::spawn(|| {
+        listen_for_connections();
+    });
+
+    println!("TCP Backdoor started!!");
+}
 
 fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8Error> {
     // Store all the bytes for our received String
@@ -79,18 +119,11 @@ fn handle_client(mut stream: TcpStream) {
             }
 
             "get_root_objects" => {
-                let g_objects = GameBase::singleton().gobjects();
-
-                for i in 0..(g_objects.num_elements.to_native()-1) {
-                    let item = g_objects.item_at_idx(i as usize);
-                    let object = if item.is_some() && item.unwrap().is_root_set() { item.unwrap().object() } else { None };
-
-                    if object.is_some() {
-                        let obj = object.unwrap();
-                        
-                        println!("ROOT_SET[{:?}]: {:?}", i, obj.full_name());
-                    }
-                }
+                let game_base = GameBase::singleton();
+                            
+                println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
+                println!("Local Player: {:?}", unsafe { *game_base.game_instance().local_players().at_index(0).unwrap() });
+                println!("Local Player Name: {:?}", unsafe { (*game_base.game_instance().local_players().at_index(0).unwrap()).full_name() });
             }
 
             "get_players" => {
@@ -121,27 +154,4 @@ fn listen_for_connections() {
             _ => ()
         };
     }
-}
-
-#[ctor::ctor]
-fn ctor() {
-    let base_addr = unsafe { GetModuleHandleA(std::ptr::null()) as *const c_void };
-    let game_base = GameBase::generate(
-        base_addr,
-        OFFSET_STRUCT_GOBJECTS,
-        OFFSET_FUNC_GETNAMES,
-        OFFSET_FUNC_GET_DISPLAY_NAME
-    );
-
-    GameBase::set_singleton(game_base);
-    
-    println!("Injected - Game Base: {:?}", GameBase::singleton());
-
-    println!("Starting TCP backdoor....");
-
-    thread::spawn(|| {
-        listen_for_connections();
-    });
-
-    println!("TCP Backdoor started!!");
 }

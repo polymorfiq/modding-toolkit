@@ -1,6 +1,6 @@
 use crate::{AActor, FName, TBaseDynamicMulticastDelegate, TSubclassOf, TWeakObjectPtr, UnknownType};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct AController {
     // Size: 0x03A8
@@ -18,7 +18,7 @@ pub struct AController {
     flags: [u8; 5]
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 #[repr(C)]
 pub struct APlayerController {
     // Size: 0x0678

@@ -24,9 +24,7 @@ pub struct UObject {
 }
 
 impl UObject {
-    pub fn name(&self) -> FName {
-        self.base.name_private
-    }
+    pub fn name(&self) -> FName { self.base.name_private }
 
     pub fn class(&self) -> &UClass {
         unsafe { self.base.class_private.as_ref::<'static>().unwrap() }
