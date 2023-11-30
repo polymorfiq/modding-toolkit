@@ -3,16 +3,17 @@ use crate::{FName, TArray, TBaseDynamicMulticastDelegate, TEnumAsByte, TWeakObje
 #[derive(Debug, Clone)]
 #[repr(C)]
 pub struct AActor {
-    // Size: 0x0330
+    // Size: 0x0348
     base_object: UObject,
     primary_actor_tick: FActorTickFunction,
+    b_something: u32,
     b_hidden: u8,
-    flags: [u8; 31],
     remote_role: TEnumAsByte<UnknownType>,
+    _something_a: [u8; 2],
     replicated_movement: FRepMovement,
-    initial_life_span: f64,
-    custom_time_dilation: f64,
-    creation_time: f64,
+    initial_life_span: f32,
+    custom_time_dilation: f32,
+    creation_time: f32,
     attachment_replication: FRepAttachment,
     owner: *const AActor,
     net_driver_name: FName,
@@ -21,13 +22,14 @@ pub struct AActor {
     spawn_collision_handling_method: u8,
     auto_receive_input: TEnumAsByte<UnknownType>,
     input_priority: u32,
+    _something_b: [u8; 4],
     input_component: *const UnknownType,
-    net_cull_distance_squared: f64,
+    net_cull_distance_squared: f32,
     net_tag: u32,
-    net_update_frequency: f64,
-    min_net_update_frequency: f64,
-    net_priority: f64,
-    cached_last_render_time: f64,
+    net_update_frequency: f32,
+    min_net_update_frequency: f32,
+    net_priority: f32,
+    cached_last_render_time: f32,
     instigator: *const UnknownType,
     children: TArray<*const AActor>,
     root_component: *const UnknownType,
@@ -35,6 +37,7 @@ pub struct AActor {
     timer_handle_lifespan_expired: u64,
     layers: TArray<FName>,
     parent_component: TWeakObjectPtr<UnknownType>,
+    _something_c: [u8; 8],
     tags: TArray<FName>,
     on_take_any_damage: TBaseDynamicMulticastDelegate,
     on_take_point_damage: TBaseDynamicMulticastDelegate,
@@ -52,10 +55,11 @@ pub struct AActor {
     on_actor_hit: TBaseDynamicMulticastDelegate,
     on_destroyed: TBaseDynamicMulticastDelegate,
     on_end_play: TBaseDynamicMulticastDelegate,
-    _unknown: [u8; 0x60],
+    replicated_components: TArray<*const UnknownType>,
+    _owned_components: [u8; 0x50],
     instance_components: TArray<UnknownType>,
     blueprint_created_components: TArray<UnknownType>,
-    _unknown_b: [u8; 0x10]
+    _detach_fence: [u8; 0x10]
 }
 
 impl AActor {

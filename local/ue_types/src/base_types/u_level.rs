@@ -1,14 +1,17 @@
 use std::marker::PhantomData;
-use crate::{AActor, FName, FURL, TArray, UObject, UnknownType};
+use crate::{AActor, FName, FURL, TArray, UObject, UnknownType, UWorld};
 
 #[derive(Debug, Clone)]
 #[repr(C)]
 pub struct ULevel<'a> {
+    // 0x288
     base_object: UObject,
     base_asset_user_data: IInterfaceAssetUserData,
     url: FURL,
     actors: TArray<*const AActor>,
     actors_for_gc: TArray<*const AActor>,
+    owning_world: *const UWorld<'a>,
+    _other_stuff: [u8; 0x1C0],
     _phantom: PhantomData<&'a u8>
 }
 

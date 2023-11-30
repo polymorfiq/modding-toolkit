@@ -1,6 +1,6 @@
 use simple_endian::*;
 use std::marker::PhantomData;
-use widestring::{WideString, WideChar, U16String};
+use widestring::{WideString, WideChar};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
@@ -112,7 +112,7 @@ pub struct FString {
 
 impl FString {
     pub fn to_string (&self) -> String { self.to_wide_string().to_string().unwrap() }
-    pub fn to_wide_string(&self) -> U16String {
+    pub fn to_wide_string(&self) -> WideString {
         let mut chars: Vec<WideChar> = vec![];
 
         for i in 0..self.data.len() {
@@ -122,4 +122,10 @@ impl FString {
 
         WideString::from_vec(chars)
     }
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FIntVector {
+    _data: [u8; 0xC]
 }

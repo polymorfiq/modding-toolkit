@@ -34,6 +34,9 @@ fn ctor() {
     println!("UProperty: {:#01x?}", std::mem::size_of::<UProperty>());
     println!("UObject: {:#01x?}", std::mem::size_of::<UObject>());
     println!("AActor: {:#01x?}", std::mem::size_of::<AActor>());
+    println!("FString: {:#01x?}", std::mem::size_of::<FString>());
+    println!("FURL: {:#01x?}", std::mem::size_of::<FURL>());
+    println!("ULevel: {:#01x?}", std::mem::size_of::<ULevel>());
     println!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
     println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
     println!("Local Player: {:?}", unsafe { *game_base.game_instance().local_players().at_index(0).unwrap() });
