@@ -181,6 +181,7 @@ pub struct FWorldContext<'a> {
 
 impl<'a> FWorldContext<'a> {
     pub fn world_type(&self) -> u8 { self.world_type.data() }
+    pub fn context_handle(&self) -> FName { self.context_handle }
 
     pub fn world(&self) -> &'a UWorld<'a> {
         unsafe { self.this_current_world.as_ref::<'a>().unwrap() }

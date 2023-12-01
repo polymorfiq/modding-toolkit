@@ -11,9 +11,14 @@ use directories::BaseDirs;
 
 use ue_types::*;
 
+// Game Instance VFTable: 0x48AD730 (0x7FF67932D730)
+// Game Engine VFTable: 0x4dfc3e8 (0x7FF67987C3E8)
+
 const MESSAGE_SIZE: usize = 1;
 const OFFSET_FUNC_GETNAMES: isize = 0xf08e80;
 const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
+// const OFFSET_STRUCT_GAME_INSTANCE_VFTABLE: isize = 0x48AD730;
+// const OFFSET_STRUCT_ENGINE: isize = 0x4DFC3E8;
 const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
 // const OFFSET_FUNC_ULEVEL_GET_ACTORS: isize = 0x3F95240;
 
@@ -28,32 +33,21 @@ fn ctor() {
     );
 
     let game_base = GameBase::set_singleton(game_base);
-    
-    println!("Injected - Game Base: {:?}", GameBase::singleton());
-    println!("UProperty: {:#01x?}", std::mem::size_of::<UProperty>());
+    println!("Injected - Game Base: {:p}", GameBase::singleton());
     println!("World Name: {:#01x?}", game_base.world().full_name());
-    // println!("World: {:#01x?}", game_base.world());
-    // println!("Level: {:#01x?}", game_base.world().persistent_level());
-    // println!("Level Name: {:#01x?}", game_base.world().persistent_level().full_name());
-    // println!("Level Owning World: {:#01x?}", game_base.world().persistent_level().owning_world().full_name());
-    // println!("Owning Game Instance Name: {:#01x?}", game_base.world().owning_game_instance().full_name());
-    println!("World ADDR 1: {:p}", game_base.world());
-    println!("Game Instance: {:p}", game_base.game_instance());
+
+    // let interesting_item = game_base.gobjects().item_at_idx(60901).expect("Failed to find Interesting");
+    // let interesting_obj = interesting_item.object::<UGameEngine>().expect("Unable to unwrap Interesting object");
+    // println!("Interesting: {:#01x?}", interesting_obj);
+    
+    println!("Game Instance Name: {:#01x?}", game_base.game_instance().full_name());
     println!("World Context: {:p}", game_base.game_instance().world_context());
-    // println!("World ADDR 2: {:p}", game_base.game_instance().world_context().world());
-    // println!("World ADDR 2: {:p}", game_base.game_instance().world_context().world());
-    // println!("World Name 2: {:?}", game_base.game_instance().world_context().world().full_name());
-    // println!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
-    // println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
-    // println!("Local Player: {:?}", unsafe { *game_base.game_instance().local_players().at_index(0).unwrap() });
-    // println!("Local Player Name: {:?}", unsafe { (*game_base.game_instance().local_players().at_index(0).unwrap()).full_name() });
-    // println!("World: {:#01x?}", game_base.world());
-    // println!("Level (Actors Length): {:?}", game_base.world().persistent_level().actors().len());
-
-    let actors = game_base.world().persistent_level().actors();
-    println!("Actor[0] addr: {:#01x?}", actors.at_index(0).unwrap() );
-    println!("Actor[0]: {:?}", unsafe { actors.at_index(0).unwrap().as_ref::<'static>().unwrap().full_name() } );
-
+    println!("World Context World: {:?}", game_base.game_instance().world_context().world());
+    println!("World ADDR 2: {:p}", game_base.game_instance().world_context().world());
+    println!("World Name 2: {:?}", game_base.game_instance().world_context().world().full_name());
+    println!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
+    println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
+    println!("Level (Actors Length): {:?}", game_base.world().persistent_level().actors().len());
 
     println!("Starting TCP backdoor....");
 
@@ -119,19 +113,23 @@ fn handle_client(mut stream: TcpStream) {
                     let object = if item.is_some() { item.unwrap().object() } else { None };
 
                     if object.is_some() {
-                        let obj = object.unwrap();
+                        let obj: &UObject = object.unwrap();
                         writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().full_name()).unwrap();
                     }
                 }
-            }
+            },
 
-            "get_root_objects" => {
-                let game_base = GameBase::singleton();
-                            
-                println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
-                println!("Local Player: {:?}", unsafe { *game_base.game_instance().local_players().at_index(0).unwrap() });
-                println!("Local Player Name: {:?}", unsafe { (*game_base.game_instance().local_players().at_index(0).unwrap()).full_name() });
-            }
+            "get_actors" => {
+                let actors = GameBase::singleton().world().persistent_level().actors();
+                for i in 0..(actors.len()) {
+                    let actor = actors.at_index(i);
+                    let actor_ref = if actor.is_some() { unsafe { (*actor.unwrap()).as_ref() } } else { None };
+
+                    if actor_ref.is_some() {
+                        println!("Actor[{}]: {:?}", i, actor_ref.unwrap().full_name() );
+                    }
+                }
+            },
 
             "get_players" => {
                 stream.write(b"42\n").expect("Tried to write to TCP Stream");

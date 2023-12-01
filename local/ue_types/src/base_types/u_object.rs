@@ -24,6 +24,7 @@ pub struct UObject {
 }
 
 impl UObject {
+    pub fn virtual_funcs(&self) -> *const c_void { self.base.__vf_table }
     pub fn name(&self) -> FName { self.base.name_private }
 
     pub fn class(&self) -> &UClass {
@@ -104,19 +105,15 @@ impl FChunkedFixedUObjectArray {
 #[repr(C)]
 pub struct FUObjectItem {
     // Size: 0x14
-    pub object_addr: *mut UObject,
+    pub object_addr: *const UObject,
     pub flags: u32,
     pub cluster_root_idx: u32,
     pub serial_number: u32
 }
 
 impl FUObjectItem {
-    pub fn object(&self) -> Option<UObject> {
-        if (self.object_addr as *const c_void) == std::ptr::null() {
-            None
-        } else {
-            unsafe { Some(*self.object_addr) }
-        }
+    pub fn object<'a, T>(&self) -> Option<&'a T> {
+        unsafe { (self.object_addr as *const T).as_ref::<'a>() }
     }
 
     pub fn is_root_set(&self) -> bool {
@@ -128,7 +125,7 @@ impl FUObjectItem {
 #[repr(C)]
 struct UObjectBase {
     // Size: 0x30
-    __vf_table: *mut c_void,
+    pub __vf_table: *mut c_void,
     pub obj_flags: u32,
     internal_idx: u32le,
     pub class_private: *mut UClass,
@@ -136,3 +133,5 @@ struct UObjectBase {
     _padding: [u8; 4],
     outer_private: *const UObject
 }
+
+impl UObjectBase {}

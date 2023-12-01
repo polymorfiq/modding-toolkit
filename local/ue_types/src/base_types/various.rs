@@ -4,6 +4,13 @@ use widestring::{WideString, WideChar};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
+pub struct TIndirectArray<T> {
+    // Size: 0x10
+    data: TArray<*const T>,
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
 pub struct TArray<T> {
     // Size: 0x10
     data: *const T,
@@ -12,9 +19,9 @@ pub struct TArray<T> {
 }
 
 impl<T: Copy> TArray<T> {
-    pub fn at_index<'b>(&self, idx: usize) -> Option<T> {
+    pub fn at_index<'b>(&self, idx: usize) -> Option<&'b T> {
         if idx < self.array_num.to_native() as usize {
-            unsafe { Some(*self.data.offset(idx as isize)) }
+            unsafe { self.data.offset(idx as isize).as_ref::<'b>() }
         } else {
             None
         }
@@ -63,6 +70,20 @@ impl<T> TEnumAsByte<T> {
 pub struct TWeakObjectPtr<T> {
     ptr: u64,
     _phantom: PhantomData<T>
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct TWeakPtr<T> {
+    object: *const T,
+    weak_ref_count: u16le
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct TSharedPtr<T> {
+    object: *const T,
+    shared_ref_count: u16le
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -121,7 +142,7 @@ impl FString {
 
         for i in 0..self.data.len() {
             let curr = self.data.at_index(i).unwrap();
-            chars.push(curr);
+            chars.push(*curr);
         }
 
         WideString::from_vec(chars)
@@ -143,4 +164,10 @@ pub struct FGuid {
     b: u32le,
     c: u32le,
     d: u32le
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FExec {
+    _unknown: [u8; 0x8]
 }

@@ -1,11 +1,11 @@
 use std::marker::PhantomData;
-use crate::{FName, FWorldContext, TArray, ULocalPlayer, UObject, UnknownType};
+use crate::{FExec, FName, FWorldContext, TArray, ULocalPlayer, UObject, UnknownType};
 
 #[derive(Debug, Clone)]
 #[repr(C)]
 pub struct UGameInstance<'a> {
     base_object: UObject,
-    _something: *const UnknownType,
+    base_exec: FExec,
     world_context: *const FWorldContext<'a>,
     local_players: TArray<*const ULocalPlayer>,
     online_session: *const UnknownType,

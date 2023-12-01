@@ -1,4 +1,4 @@
-use crate::{APlayerController, FName, TEnumAsByte, UnknownType, UObject};
+use crate::{APlayerController, FExec, FName, TEnumAsByte, UnknownType, UObject};
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
@@ -36,12 +36,6 @@ impl ULocalPlayer {
     pub fn object(&self) -> UObject { self.player().object() }
     pub fn name(&self) -> FName { self.object().name() }
     pub fn full_name(&self) -> String { self.object().full_name() }
-}
-
-#[derive(Debug, Copy, Clone)]
-#[repr(C)]
-pub struct FExec {
-    _unknown: [u8; 0x8]
 }
 
 #[derive(Debug, Copy, Clone)]

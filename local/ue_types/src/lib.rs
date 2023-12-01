@@ -8,19 +8,17 @@ use injection_utils::InjectionBase;
 
 #[derive(Debug, Copy, Clone)]
 pub struct GameBase {
-    addr_game_instance: *const UGameInstance<'static>,
-    addr_world: *const UWorld<'static>,
+    game_instance: Option<&'static UGameInstance<'static>>,
+    world: Option<&'static UWorld<'static>>,
 }
 
 static mut GAME_BASE: GameBase = GameBase::empty();
-const GOBJECTS_IDX_GAME_INSTANCE: isize = 79;
-const GOBJECTS_IDX_WORLD: isize = 301;
 
 impl GameBase {
     pub const fn empty() -> Self {
         Self {
-            addr_game_instance: std::ptr::null(),
-            addr_world: std::ptr::null()
+            game_instance: None,
+            world: None
         }
     }
 
@@ -52,23 +50,22 @@ impl GameBase {
     }
 
     pub fn initialize(&mut self) {
-        let game_instance_item = self.gobjects().item_at_idx(GOBJECTS_IDX_GAME_INSTANCE as usize).expect("Failed to find GameInstance");
-        let game_instance_obj = game_instance_item.object().expect("Unable to unwrap GameInstance object");
-        let game_instance_name = game_instance_obj.name().to_string();
-        if game_instance_name != Some("GameInstance".to_string()) {
-            panic!("Picked wrong GObject out of GObjects - expected GameInstance but got {:?}!", game_instance_name);
+        let mut game_engine: Option<&UGameEngine> = None;
+        let g_objects = GameBase::singleton().gobjects();
+        for i in 0..(g_objects.num_elements.to_native()-1) {
+            let item = g_objects.item_at_idx(i as usize);
+            let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
+            let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
+
+            if obj_name == Some("/Engine/Transient.GameEngine".to_string()) {
+                    game_engine = Some(item.expect("Unable to unwrap Game Engine item").object::<UGameEngine>().expect("Unable to unwrap Game Engine object"))
+            }
         }
 
-        self.addr_game_instance = game_instance_item.object_addr as *const UGameInstance;
-
-        let world_item = self.gobjects().item_at_idx(GOBJECTS_IDX_WORLD as usize).expect("Failed to find World");
-        let world_obj = world_item.object().expect("Unable to unwrap World object");
-        let world_name = world_obj.name().to_string();
-        if world_name != Some("World".to_string()) {
-            panic!("Picked wrong GObject out of GObjects - expected World but got {:?}!", world_name);
-        }
-
-        self.addr_world = world_item.object_addr as *const UWorld;
+        println!("Found Game Engine at {:?}", game_engine);
+        let game_instance = game_engine.expect("Failed to unwrap Game Engine").game_instance();
+        self.game_instance = Some(game_instance);
+        self.world = Some(game_instance.world_context().world())
     }
 
     pub fn singleton() -> &'static Self {
@@ -92,13 +89,8 @@ impl GameBase {
         unsafe { *ptr }
     }
 
-    pub fn game_instance(&self) -> &'static UGameInstance {
-        unsafe { self.addr_game_instance.as_ref::<'static>().unwrap() }
-    }
-
-    pub fn world(&self) -> &'static UWorld {
-        unsafe { self.addr_world.as_ref::<'static>().unwrap() }
-    }
+    pub fn game_instance(&self) -> &'static UGameInstance { self.game_instance.unwrap() }
+    pub fn world(&self) -> &'static UWorld { self.world.unwrap() }
 
     pub fn get_display_name(&self, f_name: &FName) -> *const FNameEntryHeader {
         let get_display_name: fn(*const FName) -> *const FNameEntryHeader = unsafe {
@@ -120,6 +112,8 @@ mod tests {
     #[test]
     fn correct_data_sizes() {
         assert_eq!(std::mem::size_of::<TEnumAsByte<UnknownType>>(), 0x1);
+        assert_eq!(std::mem::size_of::<TWeakPtr<UnknownType>>(), 0x10);
+        assert_eq!(std::mem::size_of::<FExec>(), 0x8);
         assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject>(), 0x30);
@@ -131,6 +125,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<UWorld>(), 0x730);
         assert_eq!(std::mem::size_of::<FSeamlessTravelHandler>(), 0xA8);
         assert_eq!(std::mem::size_of::<FWorldContext>(), 0x278);
-        
+        assert_eq!(std::mem::size_of::<UEngine>(), 0xEC8);
+        assert_eq!(std::mem::size_of::<UGameEngine>(), 0xF18);
     }
 }

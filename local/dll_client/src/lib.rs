@@ -68,7 +68,7 @@ fn handle_client(mut stream: TcpStream) {
 
                 for i in 0..(g_objects.num_elements.to_native()-1) {
                     let item = g_objects.item_at_idx(i as usize);
-                    let object = if item.is_some() { item.unwrap().object() } else { None };
+                    let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
 
                     if object.is_some() {
                         let obj = object.unwrap();
