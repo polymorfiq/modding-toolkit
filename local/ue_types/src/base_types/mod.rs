@@ -11,7 +11,7 @@ pub mod u_game_instance;
 pub use u_game_instance::UGameInstance;
 
 pub mod u_world;
-pub use u_world::{FWorldContext, UWorld};
+pub use u_world::{FWorldContext, FSeamlessTravelHandler, UWorld};
 
 pub mod u_level;
 pub use u_level::ULevel;

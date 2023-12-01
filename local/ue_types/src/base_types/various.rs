@@ -7,8 +7,8 @@ use widestring::{WideString, WideChar};
 pub struct TArray<T> {
     // Size: 0x10
     data: *const T,
-    array_num: u32be,
-    array_max: u32be
+    array_num: u32le,
+    array_max: u32le
 }
 
 impl<T: Copy> TArray<T> {
@@ -101,6 +101,9 @@ impl FURL {
     pub fn redirect_url(&self) -> &FString { &self.redirect_url }
     pub fn op(&self) -> &TArray<FString> { &self.op }
     pub fn portal(&self) -> &FString { &self.portal }
+    pub fn to_string(&self) -> String {
+        format!("{:?}://{:?}:{:?}/{:?}?{:?}", self.protocol.len(), self.host.len(), self.port, self.map.len(), self.portal.len())
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -114,6 +117,7 @@ impl FString {
     pub fn to_string (&self) -> String { self.to_wide_string().to_string().unwrap() }
     pub fn to_wide_string(&self) -> WideString {
         let mut chars: Vec<WideChar> = vec![];
+        if self.data.len() == 0 { return "".to_string().into() };
 
         for i in 0..self.data.len() {
             let curr = self.data.at_index(i).unwrap();
@@ -122,10 +126,21 @@ impl FString {
 
         WideString::from_vec(chars)
     }
+    pub fn len(&self) -> usize { self.data.len() }
 }
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FIntVector {
     _data: [u8; 0xC]
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FGuid {
+    // Size: 0x10
+    a: u32le,
+    b: u32le,
+    c: u32le,
+    d: u32le
 }

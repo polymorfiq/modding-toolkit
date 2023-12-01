@@ -2,6 +2,7 @@ use simple_endian::*;
 use super::{
     AController,
     APlayerController,
+    FGuid,
     FIntVector,
     FName,
     FString,
@@ -116,6 +117,18 @@ pub struct UWorld<'a> {
 }
 
 impl<'a> UWorld<'a> {
+    pub fn object(&self) -> UObject { self.base_object }
+    pub fn name(&self) -> FName { self.object().name() }
+    pub fn full_name(&self) -> String { self.object().full_name() }
+    pub fn url(&self) -> FURL { self.url }
+    pub fn owning_game_instance(&self) -> Option<&UGameInstance> {
+        if self.owning_game_instance != std::ptr::null() {
+            Some(unsafe { self.owning_game_instance.as_ref::<'a>().unwrap() })
+        } else {
+            None
+        }
+    }
+
     pub fn persistent_level(&self) -> &'a ULevel<'a> {
         unsafe { self.persistent_level.as_ref::<'a>().unwrap() }
     }
@@ -130,8 +143,39 @@ pub struct FNetworkNotify {
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FWorldContext<'a> {
+    // Size: 0x278
     world_type: TEnumAsByte<UnknownType>,
-    _unknown: [u8; 0x26F],
+    _padding_a: [u8; 7],
+    seamless_travel_handler: FSeamlessTravelHandler<'a>,
+    context_handle: FName,
+    _padding_b: [u8; 4],
+    travel_url: FString,
+    travel_type: u8,
+    _padding_c: [u8; 7],
+    last_url: FURL,
+    last_remote_url: FURL,
+    pending_net_game: *const UnknownType,
+    packages_to_fully_load: TArray<UnknownType>,
+    levels_to_load_for_pending_map_change: TArray<FName>,
+    loaded_levels_for_pending_map_change: TArray<*const ULevel<'a>>,
+    pending_map_change_failure_description: FString,
+    _b_a: u8,
+    _padding_d: [u8; 7],
+    object_referencers: TArray<UnknownType>,
+    pending_level_streaming_status_updates: TArray<UnknownType>,
+    game_viewport: *const UnknownType,
+    owning_game_instance: *const UGameInstance<'a>,
+    active_net_driver: TArray<UnknownType>,
+    pie_instance: u32le,
+    _padding_e: [u8; 4],
+    pie_prefix: FString,
+    pie_world_feature_level: u32le,
+    run_as_dedicated: u8,
+    b_waiting_on_online_subsytem: u8,
+    _padding_f: [u8; 2],
+    audio_device_handle: u32le,
+    _padding_g: [u8; 4],
+    external_references: TArray<*const UWorld<'a>>,
     this_current_world: *const UWorld<'a>
 }
 
@@ -141,4 +185,21 @@ impl<'a> FWorldContext<'a> {
     pub fn world(&self) -> &'a UWorld<'a> {
         unsafe { self.this_current_world.as_ref::<'a>().unwrap() }
     }
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C)]
+pub struct FSeamlessTravelHandler<'a> {
+    // Size: 0xA8
+    pending_travel_url: FURL,
+    pending_travel_guid: FGuid,
+    loaded_package: *const UnknownType,
+    current_world: *const UWorld<'a>,
+    loaded_world: *const UWorld<'a>,
+    b_transition_in_progress: u8,
+    b_switched_to_default_map: u8,
+    b_pause_at_midpoint: u8,
+    b_need_cancel_cleanup: u8,
+    world_context_handle: FName,
+    seamless_travel_start_time: *const UnknownType
 }

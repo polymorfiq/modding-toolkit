@@ -119,6 +119,9 @@ mod tests {
     
     #[test]
     fn correct_data_sizes() {
+        assert_eq!(std::mem::size_of::<TEnumAsByte<UnknownType>>(), 0x1);
+        assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
+        assert_eq!(std::mem::size_of::<AActor>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject>(), 0x30);
         assert_eq!(std::mem::size_of::<UField>(), 0x38);
         assert_eq!(std::mem::size_of::<TArray<UObject>>(), 0x10);
@@ -126,5 +129,8 @@ mod tests {
         assert_eq!(std::mem::size_of::<FURL>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x288);
         assert_eq!(std::mem::size_of::<UWorld>(), 0x730);
+        assert_eq!(std::mem::size_of::<FSeamlessTravelHandler>(), 0xA8);
+        assert_eq!(std::mem::size_of::<FWorldContext>(), 0x278);
+        
     }
 }

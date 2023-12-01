@@ -20,6 +20,7 @@ impl<'a> ULevel<'a> {
     pub fn actors(&self) -> TArray<*const AActor> { self.actors }
     pub fn name(&self) -> FName { self.object().name() }
     pub fn full_name(&self) -> String { self.object().full_name() }
+    pub fn owning_world(&self) -> &UWorld { unsafe { self.owning_world.as_ref::<'a>().unwrap() } }
 }
 
 #[derive(Debug, Copy, Clone)]

@@ -9,7 +9,7 @@ use std::fs::OpenOptions;
 extern crate directories;
 use directories::BaseDirs;
 
-use ue_types::GameBase;
+use ue_types::*;
 
 const MESSAGE_SIZE: usize = 1;
 const OFFSET_FUNC_GETNAMES: isize = 0x10E94B0;
