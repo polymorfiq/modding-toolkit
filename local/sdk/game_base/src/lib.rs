@@ -2,10 +2,11 @@
 use std::ffi::c_void;
 use ue_types::*;
 
-static mut GAME_BASE: GameBase = GameBase::empty();
+static mut GAME_BASE: GameBase = GameBase::empty("static_init");
 
 #[derive(Debug, Copy, Clone)]
 pub struct GameBase {
+    pub mod_name: &'static str,
     addr_base: Option<*const c_void>,
     addr_gobjects: Option<*const c_void>,
     addr_gnames: Option<*const c_void>,
@@ -32,12 +33,13 @@ const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0x10E9440;
 
 
 impl Default for GameBase {
-    fn default() -> Self { Self::empty() }
+    fn default() -> Self { Self::empty("default_init") }
 }
 
 impl GameBase {
-    pub const fn empty() -> Self {
+    pub const fn empty(mod_name: &'static str) -> Self {
         Self {
+            mod_name: mod_name,
             addr_base: None,
             addr_gobjects: None,
             addr_gnames: None,
@@ -49,6 +51,7 @@ impl GameBase {
     }
 
     pub fn initialize(
+        mod_name: &'static str,
         base_addr: *const c_void
     ) -> &'static Self {
         let addr_gobjects = unsafe { base_addr.byte_offset(OFFSET_STRUCT_GOBJECTS) };
@@ -60,6 +63,7 @@ impl GameBase {
         let addr_get_display_name = unsafe { base_addr.byte_offset(OFFSET_FUNC_GET_DISPLAY_NAME) };
 
         let mut generated = Self {
+            mod_name: mod_name,
             addr_base: Some(base_addr),
             addr_gobjects: Some(addr_gobjects),
             addr_gnames: Some(addr_gnames),
@@ -68,19 +72,19 @@ impl GameBase {
         };
 
         ue_types::funcs::set_get_display_name(generated.get_display_name_fn());
-        generated.search_game_objects();
+        generated.search_game_objects(mod_name);
         Self::set_singleton(generated);
 
         unsafe { &GAME_BASE }
     }
 
-    pub fn search_game_objects(&mut self) {
+    pub fn search_game_objects(&mut self, mod_name: &'static str) {
         let mut attempt_num:usize = 0;
         loop {
             if self.search_game_objects_attempt() {
                 break
             } else if attempt_num > 20 {
-                println!("Elefrac Game SDK - Couldn't find Game Engine & Console! Giving up!");
+                println!("Elefrac Game SDK ({}) - Couldn't find Game Engine & Console! Giving up!", mod_name);
                 break;
             } else {
                 attempt_num += 1;
@@ -110,8 +114,6 @@ impl GameBase {
         }
 
         if game_engine.is_some() && self.game_console.is_some() {
-            println!("Found Game Engine at {:p}", if game_engine.is_some() { game_engine.unwrap() } else { std::ptr::null() });
-            println!("Found Game Console at {:p}", if self.game_console.is_some() { self.game_console.unwrap() } else { std::ptr::null() });
             true
         } else {
             false

@@ -4,7 +4,6 @@ use widestring::WideString;
 
 static mut CONSOLE: Option<&UConsole> = None;
 pub fn set_console(console: Option<&'static UConsole>) {
-    println!("CONSOLE SET: {:?}", console);
     unsafe { CONSOLE = console };
 }
 
