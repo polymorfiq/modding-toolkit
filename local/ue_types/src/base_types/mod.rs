@@ -7,6 +7,9 @@ pub use u_object::{UObject, FUObjectArray, FChunkedFixedUObjectArray};
 pub mod u_class;
 pub use u_class::UClass;
 
+pub mod u_console;
+pub use u_console::{UConsole, FAutoCompleteNode, FOutputDevice};
+
 pub mod u_engine;
 pub use u_engine::{UGameEngine, UEngine};
 

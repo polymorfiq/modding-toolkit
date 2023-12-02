@@ -1,5 +1,10 @@
 #![feature(pointer_byte_offsets)]
 use core::ffi::c_void;
+use retour::static_detour;
+
+static_detour! {
+    static CheatGod: extern "C" fn(*const c_void);
+}
 
 pub struct InjectionBase {
     pub addr_base: *const c_void,
@@ -27,5 +32,17 @@ impl InjectionBase {
             INJECTION_BASE = base;
             &INJECTION_BASE
         }
+    }
+
+    pub unsafe fn override_god() -> () {
+        let singleton = Self::singleton();
+        let addr_cheat_god = unsafe { singleton.addr_base.byte_offset(0xb83300) };
+        CheatGod.initialize(std::mem::transmute(addr_cheat_god), Self::cheat_god_shiv).unwrap();
+        CheatGod.enable().unwrap();
+    }
+
+    fn cheat_god_shiv(_manager: *const c_void) {
+        // Let's do this instead of incrementing the counter
+        println!("Someone tried to cheat by using God!");
     }
 }

@@ -18,6 +18,16 @@ pub struct TArray<T> {
     array_max: u32le
 }
 
+impl<T> TArray<T> {
+    pub fn from_data(data: *const T, num: u32, max: u32) -> Self {
+        Self {
+            data: data,
+            array_num: num.into(),
+            array_max: max.into()
+        }
+    }
+}
+
 impl<T: Copy> TArray<T> {
     pub fn at_index<'b>(&self, idx: usize) -> Option<&'b T> {
         if idx < self.array_num.to_native() as usize {
@@ -148,6 +158,36 @@ impl FString {
         WideString::from_vec(chars)
     }
     pub fn len(&self) -> usize { self.data.len() }
+}
+
+static mut F_STRING_STORAGE: Vec<OwnedFString> = vec![];
+#[derive(Debug, Clone)]
+#[repr(C)]
+pub struct OwnedFString {
+    // Size: 0x10
+    str_data: WideString
+}
+
+impl OwnedFString {
+    pub fn from_string(data: String) -> &'static Self {
+        let wide_str = WideString::from_str(data.as_str());
+        let new_str = Self{str_data: wide_str};
+
+        unsafe {
+            F_STRING_STORAGE.push(new_str);
+            F_STRING_STORAGE.last().unwrap()
+        }
+    }
+
+    pub fn fstring(&self) -> FString {
+        let char_ptr = self.str_data.as_ptr() as *const WideChar;
+        let str_len = self.str_data.len() as u32;
+        let capacity = self.str_data.capacity() as u32;
+
+        let str_array = TArray::<WideChar>::from_data(char_ptr, str_len, capacity);
+
+        FString{data: str_array}
+    }
 }
 
 #[derive(Debug, Copy, Clone)]

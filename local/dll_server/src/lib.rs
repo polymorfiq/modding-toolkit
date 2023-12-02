@@ -10,6 +10,8 @@ extern crate directories;
 use directories::BaseDirs;
 
 use ue_types::*;
+use injection_utils::InjectionBase;
+use utils::{debug, warning};
 
 // Game Instance VFTable: 0x48AD730 (0x7FF67932D730)
 // Game Engine VFTable: 0x4dfc3e8 (0x7FF67987C3E8)
@@ -32,30 +34,32 @@ fn ctor() {
         OFFSET_FUNC_GET_DISPLAY_NAME
     );
 
+    utils::init();
+
     let game_base = GameBase::set_singleton(game_base);
-    println!("Injected - Game Base: {:p}", GameBase::singleton());
-    println!("World Name: {:#01x?}", game_base.world().full_name());
+    debug!("Injected - Game Base: {:p}", GameBase::singleton());
+    debug!("World Name: {:#01x?}", game_base.world().full_name());
 
     // let interesting_item = game_base.gobjects().item_at_idx(60901).expect("Failed to find Interesting");
     // let interesting_obj = interesting_item.object::<UGameEngine>().expect("Unable to unwrap Interesting object");
     // println!("Interesting: {:#01x?}", interesting_obj);
     
-    println!("Game Instance Name: {:#01x?}", game_base.game_instance().full_name());
-    println!("World Context: {:p}", game_base.game_instance().world_context());
-    println!("World Context World: {:?}", game_base.game_instance().world_context().world());
-    println!("World ADDR 2: {:p}", game_base.game_instance().world_context().world());
-    println!("World Name 2: {:?}", game_base.game_instance().world_context().world().full_name());
-    println!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
-    println!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
-    println!("Level (Actors Length): {:?}", game_base.world().persistent_level().actors().len());
+    debug!("Game Instance Name: {:#01x?}", game_base.game_instance().full_name());
+    debug!("World Context: {:p}", game_base.game_instance().world_context());
+    debug!("World Context World: {:?}", game_base.game_instance().world_context().world());
+    debug!("World ADDR 2: {:p}", game_base.game_instance().world_context().world());
+    debug!("World Name 2: {:?}", game_base.game_instance().world_context().world().full_name());
+    debug!("Game Instance: {:#01x?}", game_base.game_instance().full_name());
+    debug!("Local Player Count: {:#01x?}", game_base.game_instance().local_players().len());
+    debug!("Level (Actors Length): {:?}", game_base.world().persistent_level().actors().len());
 
-    println!("Starting TCP backdoor....");
+    debug!("Starting TCP backdoor....");
 
     thread::spawn(|| {
         listen_for_connections();
     });
 
-    println!("TCP Backdoor started!!");
+    debug!("TCP Backdoor started!!");
 }
 
 fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8Error> {
@@ -101,8 +105,12 @@ fn handle_client(mut stream: TcpStream) {
             "" => (),
             
             "quit" => {
-                println!("Client disconnected...");
+                debug!("Client disconnected...");
                 break;
+            },
+
+            "override_god_cheat" => {
+                unsafe { InjectionBase::override_god(); }
             },
 
             "get_game_state" => {
@@ -126,7 +134,7 @@ fn handle_client(mut stream: TcpStream) {
                     let actor_ref = if actor.is_some() { unsafe { (*actor.unwrap()).as_ref() } } else { None };
 
                     if actor_ref.is_some() {
-                        println!("Actor[{}]: {:?}", i, actor_ref.unwrap().full_name() );
+                        debug!("Actor[{}]: {:?}", i, actor_ref.unwrap().full_name() );
                     }
                 }
             },
@@ -135,7 +143,7 @@ fn handle_client(mut stream: TcpStream) {
                 stream.write(b"42\n").expect("Tried to write to TCP Stream");
             },
 
-            msg => println!("Unknown Message: {msg}")
+            msg => warning!("Unknown Message: {msg}")
         }
     }
 }

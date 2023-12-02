@@ -27,7 +27,7 @@ pub struct UGameEngine {
 }
 
 impl UGameEngine {
-    pub fn game_instance(&self) -> &UGameInstance {
-        unsafe { self.game_instance.as_ref::<'static>().unwrap() }
+    pub fn game_instance(&self) -> Option<&UGameInstance> {
+        unsafe { self.game_instance.as_ref::<'static>() }
     }
 }

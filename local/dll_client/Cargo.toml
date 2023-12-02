@@ -18,3 +18,4 @@ directories = "5.0"
 winapi = { version = "0.3.9", features = ["winuser","libloaderapi"] }
 ue_types = { workspace = true }
 injection_utils = { workspace = true }
+utils = { workspace = true, features = ["in-game-console"] }

@@ -10,6 +10,7 @@ use injection_utils::InjectionBase;
 pub struct GameBase {
     game_instance: Option<&'static UGameInstance<'static>>,
     world: Option<&'static UWorld<'static>>,
+    game_console: Option<&'static UConsole>
 }
 
 static mut GAME_BASE: GameBase = GameBase::empty();
@@ -18,6 +19,7 @@ impl GameBase {
     pub const fn empty() -> Self {
         Self {
             game_instance: None,
+            game_console: None,
             world: None
         }
     }
@@ -58,14 +60,17 @@ impl GameBase {
             let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
 
             if obj_name == Some("/Engine/Transient.GameEngine".to_string()) {
-                    game_engine = Some(item.expect("Unable to unwrap Game Engine item").object::<UGameEngine>().expect("Unable to unwrap Game Engine object"))
+                game_engine = Some(item.expect("Unable to unwrap Game Engine item").object::<UGameEngine>().expect("Unable to unwrap Game Engine object"));
+                let game_instance = game_engine.expect("Failed to unwrap Game Engine").game_instance();
+                self.game_instance = game_instance;
+                self.world = if game_instance.is_some() { Some(game_instance.unwrap().world_context().world()) } else { None };
+
+            } else if obj_name == Some("/Engine/Transient.GameEngine.GGameViewportClient.Console".to_string()) {
+                self.game_console = item.expect("Unable to unwrap Game Console Item").object::<UConsole>();
             }
         }
 
         println!("Found Game Engine at {:?}", game_engine);
-        let game_instance = game_engine.expect("Failed to unwrap Game Engine").game_instance();
-        self.game_instance = Some(game_instance);
-        self.world = Some(game_instance.world_context().world())
     }
 
     pub fn singleton() -> &'static Self {
@@ -91,6 +96,7 @@ impl GameBase {
 
     pub fn game_instance(&self) -> &'static UGameInstance { self.game_instance.unwrap() }
     pub fn world(&self) -> &'static UWorld { self.world.unwrap() }
+    pub fn console(&self) -> Option<&'static UConsole> { self.game_console }
 
     pub fn get_display_name(&self, f_name: &FName) -> *const FNameEntryHeader {
         let get_display_name: fn(*const FName) -> *const FNameEntryHeader = unsafe {
@@ -104,6 +110,14 @@ impl GameBase {
         let ptr = unsafe { InjectionBase::singleton().addr_base.byte_offset(offset) };
         ptr
     }
+
+    pub fn get_offset_from_addr<T>(&self, addr: *const T) -> usize {
+        (addr as usize) - (InjectionBase::singleton().addr_base as usize)
+    }
+
+    pub fn get_offset<T>(&self, addr: &T) -> usize {
+        (std::ptr::addr_of!(*addr) as usize) - (InjectionBase::singleton().addr_base as usize)
+    }
 }
 #[cfg(test)]
 mod tests {
@@ -113,7 +127,9 @@ mod tests {
     fn correct_data_sizes() {
         assert_eq!(std::mem::size_of::<TEnumAsByte<UnknownType>>(), 0x1);
         assert_eq!(std::mem::size_of::<TWeakPtr<UnknownType>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TWeakPtr<FOutputDevice>>(), 0x10);
         assert_eq!(std::mem::size_of::<FExec>(), 0x8);
+        assert_eq!(std::mem::size_of::<FAutoCompleteNode>(), 0x28);
         assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject>(), 0x30);
@@ -127,5 +143,6 @@ mod tests {
         assert_eq!(std::mem::size_of::<FWorldContext>(), 0x278);
         assert_eq!(std::mem::size_of::<UEngine>(), 0xEC8);
         assert_eq!(std::mem::size_of::<UGameEngine>(), 0xF18);
+        assert_eq!(std::mem::size_of::<UConsole>(), 0x140);
     }
 }

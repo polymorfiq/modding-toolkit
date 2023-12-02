@@ -4,12 +4,12 @@ use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::io::{Read, Write};
 use winapi::um::libloaderapi::GetModuleHandleA;
-use std::fs::OpenOptions;
-
-extern crate directories;
-use directories::BaseDirs;
+// use std::fs::OpenOptions;
+// extern crate directories;
+// use directories::BaseDirs;
 
 use ue_types::*;
+use utils::{debug, warning};
 
 const MESSAGE_SIZE: usize = 1;
 const OFFSET_FUNC_GETNAMES: isize = 0x10E94B0;
@@ -44,13 +44,13 @@ fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8E
 }
 
 fn handle_client(mut stream: TcpStream) {
-    let log_path = format!("{}\\game-manager-log-client.log", BaseDirs::new().unwrap().home_dir().to_str().unwrap());
-    let mut file = OpenOptions::new()
-    .write(true)
-    .truncate(true)
-    .create(true)
-    .open(log_path)
-    .unwrap();
+    // let log_path = format!("{}\\game-manager-log-client.log", BaseDirs::new().unwrap().home_dir().to_str().unwrap());
+    // let mut file = OpenOptions::new()
+    // .write(true)
+    // .truncate(true)
+    // .create(true)
+    // .open(log_path)
+    // .unwrap();
 
     loop {
         let message = read_message(&mut stream).expect("Could not parse message");
@@ -59,7 +59,7 @@ fn handle_client(mut stream: TcpStream) {
             "" => (),
             
             "quit" => {
-                println!("Client disconnected...");
+                debug!("Client disconnected...");
                 break;
             },
 
@@ -72,7 +72,7 @@ fn handle_client(mut stream: TcpStream) {
 
                     if object.is_some() {
                         let obj = object.unwrap();
-                        writeln!(file, "GOBJECTS[{:?}]: {:?}", i, obj.full_name()).unwrap();
+                        debug!("GOBJECTS[{:?}]: {:?}", i, obj.full_name());
                     }
                 }
             }
@@ -81,19 +81,19 @@ fn handle_client(mut stream: TcpStream) {
                 stream.write(b"42\n").expect("Tried to write to TCP Stream");
             },
 
-            msg => println!("Unknown Message: {msg}")
+            msg => warning!("Unknown Message: {msg}")
         }
     }
 }
 
 fn listen_for_connections() {
-    println!("Starting TCP Listener...");
+    debug!("Starting TCP Listener...");
     let listener = TcpListener::bind("0.0.0.0:4951").expect("Could not open TCP Port");
-    println!("Waiting for TCP Connections...");
+    debug!("Waiting for TCP Connections...");
 
     // accept connections and process them serially
     for stream in listener.incoming() {
-        println!("New TCP Connection...");
+        debug!("New TCP Connection...");
 
         match stream {
             Ok(stream) => {
@@ -119,13 +119,27 @@ fn ctor() {
 
     GameBase::set_singleton(game_base);
     
-    println!("Injected - Game Base: {:?}", GameBase::singleton());
+    debug!("Injected - Game Base: {:?}", GameBase::singleton());
 
-    println!("Starting TCP backdoor....");
+    debug!("Starting TCP backdoor....");
+
+
+    let game_base = GameBase::singleton();
+    let g_objects = game_base.gobjects();
+
+    for i in 0..(g_objects.num_elements.to_native()-1) {
+        let item = g_objects.item_at_idx(i as usize);
+        let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
+
+        if object.is_some() &&  game_base.get_offset_from_addr(object.unwrap().virtual_funcs()) == 0x5ab1450 {
+            let obj: &UObject = object.unwrap();
+            debug!("GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().full_name());
+        }
+    }
 
     thread::spawn(|| {
         listen_for_connections();
     });
 
-    println!("TCP Backdoor started!!");
+    debug!("TCP Backdoor started!!");
 }
