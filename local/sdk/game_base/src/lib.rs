@@ -68,13 +68,13 @@ impl GameBase {
         };
 
         ue_types::funcs::set_get_display_name(generated.get_display_name_fn());
-        generated.initialize();
+        generated.search_game_objects();
         Self::set_singleton(generated);
 
         unsafe { &GAME_BASE }
     }
 
-    pub fn initialize(&mut self) {
+    pub fn search_game_objects(&mut self) {
         let mut game_engine: Option<&UGameEngine> = None;
         let g_objects = self.gobjects();
 
