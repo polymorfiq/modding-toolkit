@@ -1,5 +1,5 @@
 [package]
-name = "utils"
+name = "game_base"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,3 @@ edition = "2021"
 
 [dependencies]
 ue_types = { workspace = true }
-widestring = "1.0.2"
-
-[features]
-in-game-console = []

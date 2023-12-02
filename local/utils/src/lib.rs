@@ -1,9 +1,5 @@
 pub mod log;
 
-pub fn init() {
-    log::init();
-}
-
 #[macro_export]
 macro_rules! print {
     () => {

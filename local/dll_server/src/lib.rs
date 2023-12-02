@@ -2,15 +2,10 @@
 use core::ffi::c_void;
 use std::net::{TcpListener, TcpStream};
 use std::thread;
-use std::io::{Read, Write};
+use std::io::Read;
 use winapi::um::libloaderapi::GetModuleHandleA;
-use std::fs::OpenOptions;
 
-extern crate directories;
-use directories::BaseDirs;
-
-use ue_types::*;
-use injection_utils::InjectionBase;
+use game_base::GameBase;
 use utils::{debug, warning};
 
 // Game Instance VFTable: 0x48AD730 (0x7FF67932D730)
@@ -34,9 +29,7 @@ fn ctor() {
         OFFSET_FUNC_GET_DISPLAY_NAME
     );
 
-    utils::init();
-
-    let game_base = GameBase::set_singleton(game_base);
+    ue_types::funcs::set_get_display_name(game_base.get_display_name_fn());
     debug!("Injected - Game Base: {:p}", GameBase::singleton());
     debug!("World Name: {:#01x?}", game_base.world().full_name());
 
@@ -90,14 +83,6 @@ fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8E
 }
 
 fn handle_client(mut stream: TcpStream) {
-    let log_path = format!("{}\\game-manager-log-server.log", BaseDirs::new().unwrap().home_dir().to_str().unwrap());
-    let mut file = OpenOptions::new()
-    .write(true)
-    .truncate(true)
-    .create(true)
-    .open(log_path)
-    .unwrap();
-
     loop {
         let message = read_message(&mut stream).expect("Could not parse message");
 
@@ -109,41 +94,7 @@ fn handle_client(mut stream: TcpStream) {
                 break;
             },
 
-            "override_god_cheat" => {
-                unsafe { InjectionBase::override_god(); }
-            },
-
-            "get_game_state" => {
-                let g_objects = GameBase::singleton().gobjects();
-
-                for i in 0..(g_objects.num_elements.to_native()-1) {
-                    let item = g_objects.item_at_idx(i as usize);
-                    let object = if item.is_some() { item.unwrap().object() } else { None };
-
-                    if object.is_some() {
-                        let obj: &UObject = object.unwrap();
-                        writeln!(file, "GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().full_name()).unwrap();
-                    }
-                }
-            },
-
-            "get_actors" => {
-                let actors = GameBase::singleton().world().persistent_level().actors();
-                for i in 0..(actors.len()) {
-                    let actor = actors.at_index(i);
-                    let actor_ref = if actor.is_some() { unsafe { (*actor.unwrap()).as_ref() } } else { None };
-
-                    if actor_ref.is_some() {
-                        debug!("Actor[{}]: {:?}", i, actor_ref.unwrap().full_name() );
-                    }
-                }
-            },
-
-            "get_players" => {
-                stream.write(b"42\n").expect("Tried to write to TCP Stream");
-            },
-
-            msg => warning!("Unknown Message: {msg}")
+            msg => { warning!("Unknown Message: {msg}"); }
         }
     }
 }

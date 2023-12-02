@@ -6,5 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winapi = { version = "0.3.9", features = ["winuser","libloaderapi"] }
+ue_types = { workspace = true }
+utils = { workspace = true }
+game_base = { workspace = true }
 retour = "0.1.0"

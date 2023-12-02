@@ -3,6 +3,7 @@
 members = [
     "dll_client",
     "dll_server",
+    "game_base",
     "ue_types",
     "injection_utils",
     "utils"
@@ -12,3 +13,4 @@ members = [
 ue_types = { path = "./ue_types" }
 injection_utils = { path = "./injection_utils" }
 utils = { path = "./utils" }
+game_base = { path = "./game_base" }
