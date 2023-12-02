@@ -1,0 +1,14 @@
+[package]
+name = "pathfinder"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ue_types = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }
+game_base = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229", features = ["client-sdk"] }
+injection_utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }
+utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }

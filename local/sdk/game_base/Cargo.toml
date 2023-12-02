@@ -7,3 +7,8 @@ edition = "2021"
 
 [dependencies]
 ue_types = { workspace = true }
+
+[features]
+default = ["client-sdk"]
+client-sdk = []
+server-sdk = []

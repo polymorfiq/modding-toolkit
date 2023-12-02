@@ -1,16 +1,16 @@
 [workspace]
 
 members = [
-    "dll_client",
-    "dll_server",
-    "game_base",
-    "ue_types",
-    "injection_utils",
-    "utils"
+    "mod_loader",
+    "sdk/game_base",
+    "sdk/ue_types",
+    "sdk/injection_utils",
+    "sdk/utils",
+    "mods/client/pathfinder"
 ]
 
 [workspace.dependencies]
-ue_types = { path = "./ue_types" }
-injection_utils = { path = "./injection_utils" }
-utils = { path = "./utils" }
-game_base = { path = "./game_base" }
+ue_types = { path = "./sdk/ue_types" }
+injection_utils = { path = "./sdk/injection_utils" }
+utils = { path = "./sdk/utils" }
+game_base = { path = "./sdk/game_base" }

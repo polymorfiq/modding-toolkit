@@ -1,5 +1,5 @@
 [package]
-name = "dll_client"
+name = "mod_loader"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,12 +7,10 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
+name = "steam_api64"
 
 [dependencies]
-ue_types = { workspace = true }
-game_base = { workspace = true }
-injection_utils = { workspace = true }
-utils = { workspace = true, features = ["in-game-console"] }
 ctor = "0.1.25"
-windows = "0.44.0"
 winapi = { version = "0.3.9", features = ["winuser","libloaderapi"] }
+glob = "0.3.1"
+libloading = "0.8"

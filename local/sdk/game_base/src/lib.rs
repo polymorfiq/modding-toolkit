@@ -15,6 +15,21 @@ pub struct GameBase {
     game_console: Option<&'static UConsole>
 }
 
+#[cfg_attr(feature = "server-sdk")]
+const OFFSET_FUNC_GETNAMES: isize = 0xF08E80;
+#[cfg_attr(feature = "client-sdk")]
+const OFFSET_FUNC_GETNAMES: isize = 0x10E94B0;
+
+#[cfg_attr(feature = "server-sdk")]
+const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
+#[cfg_attr(feature = "client-sdk")]
+const OFFSET_STRUCT_GOBJECTS: isize = 0x753EC50;
+
+#[cfg_attr(feature = "server-sdk")]
+const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
+#[cfg_attr(feature = "client-sdk")]
+const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0x10E9440;
+
 
 impl Default for GameBase {
     fn default() -> Self { Self::empty() }
@@ -33,19 +48,16 @@ impl GameBase {
         }
     }
 
-    pub fn generate(
-        base_addr: *const c_void,
-        offset_struct_gobjects: isize,
-        offset_func_getnames: isize,
-        offset_func_get_display_name: isize,
+    pub fn initialize(
+        base_addr: *const c_void
     ) -> &'static Self {
-        let addr_gobjects = unsafe { base_addr.byte_offset(offset_struct_gobjects) };
+        let addr_gobjects = unsafe { base_addr.byte_offset(OFFSET_STRUCT_GOBJECTS) };
         
         let get_names: fn() -> *const c_void = unsafe { 
-            std::mem::transmute(base_addr.byte_offset(offset_func_getnames))
+            std::mem::transmute(base_addr.byte_offset(OFFSET_FUNC_GETNAMES))
         };
         let addr_gnames = (get_names)();
-        let addr_get_display_name = unsafe { base_addr.byte_offset(offset_func_get_display_name) };
+        let addr_get_display_name = unsafe { base_addr.byte_offset(OFFSET_FUNC_GET_DISPLAY_NAME) };
 
         let mut generated = Self {
             addr_base: Some(base_addr),
@@ -65,6 +77,7 @@ impl GameBase {
     pub fn initialize(&mut self) {
         let mut game_engine: Option<&UGameEngine> = None;
         let g_objects = self.gobjects();
+
         for i in 0..(g_objects.num_elements.to_native()-1) {
             let item = g_objects.item_at_idx(i as usize);
             let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
