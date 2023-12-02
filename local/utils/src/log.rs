@@ -8,7 +8,7 @@ pub fn set_console(console: Option<&'static UConsole>) {
     unsafe { CONSOLE = console };
 }
 
-pub fn do_print(message: &str) {
+pub fn do_logln(message: &str) {
     print_to_game_console(format!("{}", message));
     println!("{}", message);
 }

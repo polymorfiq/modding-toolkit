@@ -1,12 +1,12 @@
 pub mod log;
 
 #[macro_export]
-macro_rules! print {
+macro_rules! logln {
     () => {
-        $crate::log::do_print("\n")
+        $crate::log::do_logln("\n")
     };
     ($($arg:tt)*) => {{
-        $crate::log::do_print(std::format!($($arg)*).as_str())
+        $crate::log::do_logln(std::format!($($arg)*).as_str())
     }};
 }
 

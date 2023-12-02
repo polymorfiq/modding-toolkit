@@ -25,23 +25,22 @@ fn ctor() {
     
     debug!("Injected - Game Base: {:p}", GameBase::singleton());
 
-    injection_utils::hooks::console::initialize_shivs();
-
     thread::spawn(|| {
-        listen_for_commands();
+        let console_cmd_recv = injection_utils::hooks::console::initialize_shivs();
+
+        loop {
+            match console_cmd_recv.recv() {
+                Ok(cmd) => debug!("Received fallthrough command: {:?}", cmd),
+                _ => {
+                    debug!("Stopped watching for fallthrough commands...");
+                    break
+                }
+            }
+            
+        }
     });
 
     debug!("Command listener started!!");
-}
-
-pub fn listen_for_commands() {
-    // let game_base = GameBase::singleton();
-
-    // loop {
-    //     match game_base.next_console_command() {
-            
-    //     }
-    // }
 }
 
 pub fn do_a_thing() {

@@ -7,19 +7,20 @@ const FNAME_ENTRY_HEADER_SIZE: isize = 0xC;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct FNameEntry {
+pub struct FNameEntry<'a> {
     // Size: 0xC
     pub header: FNameEntryHeader,
-    pub value_ptr: *const i8
+    pub value: &'a CStr
 }
 
-impl FNameEntry {
+impl<'a> FNameEntry<'a> {
     pub fn from_header_ptr(entry_ptr: *const FNameEntryHeader) -> Self {
-        let value_ptr = unsafe { entry_ptr.byte_offset(FNAME_ENTRY_HEADER_SIZE) as *const i8 };
+        let value_ptr: *const i8 = unsafe { std::mem::transmute(entry_ptr.byte_offset(FNAME_ENTRY_HEADER_SIZE)) };
+        let value = unsafe { CStr::from_ptr(value_ptr) };
 
         Self {
             header: unsafe { *entry_ptr },
-            value_ptr: value_ptr
+            value: value
         }
     }
     
@@ -28,37 +29,24 @@ impl FNameEntry {
     }
 
     pub fn string_value(&self) -> Option<String> {
-        let c_str = unsafe { CStr::from_ptr(self.value_ptr) };
-        let str_val = c_str.to_str();
-
-        if str_val.is_ok() {
-            let str_slice: &str = str_val.unwrap();
-            Some(str_slice.to_owned())
-        } else {
-            None
+        match self.value.to_str() {
+            Ok(s) => Some(s.to_owned()),
+            _ => None
         }
     }
 
-    pub fn value(&self) -> &CStr {
-        unsafe { CStr::from_ptr(self.value_ptr) }
-    }
+    pub fn value(&self) -> &CStr { self.value }
 
     pub fn wide_value(&self) -> U16CString {
-        unsafe { U16CString::from_ptr_str(self.value_ptr as *const u16) }
+        unsafe { U16CString::from_ptr_str(std::ptr::addr_of!(*self.value) as *const u16) }
     }
 
     pub fn byte_len(&self) -> usize {
-        let mut len: usize = 0;
-
-        while unsafe { *((self.value_ptr as *const u8).offset(len as isize)) } != 0 {
-            if self.is_wide() {
-                len += 2;
-            } else {
-                len += 1;
-            }
+        if self.is_wide() {
+            self.wide_value().len() * 2
+        } else { 
+            self.value.to_bytes().len()
         }
-        
-        len
     }
 
     pub fn char_len(&self) -> usize {
@@ -83,11 +71,9 @@ impl FNameEntryHeader {
     }
 }
 
-impl std::string::ToString for FNameEntry {
+impl<'a> std::string::ToString for FNameEntry<'a> {
     fn to_string(&self) -> String {
-        let c_str = unsafe { CStr::from_ptr(self.value_ptr) };
-
-        match c_str.to_str() {
+        match self.value.to_str() {
             Ok(str_val) => str_val.to_owned(),
             _ => "<fname_entry_error>".to_string()
         }

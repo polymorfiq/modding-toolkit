@@ -1,4 +1,3 @@
-use std::ffi::c_void;
 use crate::*;
 use simple_endian::u32le;
 
@@ -22,7 +21,7 @@ pub struct UObject {
 }
 
 impl UObject {
-    pub fn virtual_funcs(&self) -> *const *const c_void { self.base.__vf_table }
+    pub fn virtual_funcs(&self) -> *const *const UnknownType { self.base.vf_table }
     pub fn name(&self) -> FName { self.base.name_private }
 
     pub fn class(&self) -> &UClass {
@@ -52,7 +51,7 @@ impl UObject {
 #[repr(C)]
 struct UObjectBase {
     // Size: 0x30
-    pub __vf_table: *const *const c_void,
+    pub vf_table: *const *const UnknownType,
     pub obj_flags: u32,
     internal_idx: u32le,
     pub class_private: *mut UClass,
