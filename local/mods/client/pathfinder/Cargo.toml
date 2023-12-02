@@ -8,7 +8,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-ue_types = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }
-game_base = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229", features = ["client-sdk"] }
-injection_utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }
-utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "9b5575051739b3d7a42f45586c919238c7236229" }
+ue_types = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "6a7311a830faebf96020337b5aca19480e4a34bd" }
+game_base = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "6a7311a830faebf96020337b5aca19480e4a34bd", features = ["client-sdk"] }
+injection_utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "6a7311a830faebf96020337b5aca19480e4a34bd" }
+utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "6a7311a830faebf96020337b5aca19480e4a34bd" }

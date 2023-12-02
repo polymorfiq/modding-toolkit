@@ -15,19 +15,19 @@ pub struct GameBase {
     game_console: Option<&'static UConsole>
 }
 
-#[cfg_attr(feature = "server-sdk")]
+#[cfg(feature = "server-sdk")]
 const OFFSET_FUNC_GETNAMES: isize = 0xF08E80;
-#[cfg_attr(feature = "client-sdk")]
+#[cfg(feature = "client-sdk")]
 const OFFSET_FUNC_GETNAMES: isize = 0x10E94B0;
 
-#[cfg_attr(feature = "server-sdk")]
+#[cfg(feature = "server-sdk")]
 const OFFSET_STRUCT_GOBJECTS: isize = 0x645FEC8;
-#[cfg_attr(feature = "client-sdk")]
+#[cfg(feature = "client-sdk")]
 const OFFSET_STRUCT_GOBJECTS: isize = 0x753EC50;
 
-#[cfg_attr(feature = "server-sdk")]
+#[cfg(feature = "server-sdk")]
 const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0xF08E10;
-#[cfg_attr(feature = "client-sdk")]
+#[cfg(feature = "client-sdk")]
 const OFFSET_FUNC_GET_DISPLAY_NAME: isize = 0x10E9440;
 
 
