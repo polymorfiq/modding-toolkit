@@ -75,6 +75,21 @@ impl GameBase {
     }
 
     pub fn search_game_objects(&mut self) {
+        let mut attempt_num:usize = 0;
+        loop {
+            if self.search_game_objects_attempt() {
+                break
+            } else if attempt_num > 20 {
+                println!("Elefrac Game SDK - Couldn't find Game Engine & Console! Giving up!");
+                break;
+            } else {
+                attempt_num += 1;
+                std::thread::sleep(std::time::Duration::from_millis(5000));
+            }
+        }
+    }
+
+    pub fn search_game_objects_attempt(&mut self) -> bool {
         let mut game_engine: Option<&UGameEngine> = None;
         let g_objects = self.gobjects();
 
@@ -94,8 +109,13 @@ impl GameBase {
             }
         }
 
-        println!("Found Game Engine at {:p}", if game_engine.is_some() { game_engine.unwrap() } else { std::ptr::null() });
-        println!("Found Game Console at {:p}", if self.game_console.is_some() { self.game_console.unwrap() } else { std::ptr::null() });
+        if game_engine.is_some() && self.game_console.is_some() {
+            println!("Found Game Engine at {:p}", if game_engine.is_some() { game_engine.unwrap() } else { std::ptr::null() });
+            println!("Found Game Console at {:p}", if self.game_console.is_some() { self.game_console.unwrap() } else { std::ptr::null() });
+            true
+        } else {
+            false
+        }
     }
 
     pub fn singleton() -> &'static Self {
