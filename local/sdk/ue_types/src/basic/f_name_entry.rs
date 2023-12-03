@@ -3,10 +3,9 @@ use simple_endian::u32le;
 use widestring::U16CString;
 
 const FNAME_WIDE_FLAG: u32 = 0x1;
-const FNAME_ENTRY_HEADER_SIZE: isize = 0xC;
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(4))]
 pub struct FNameEntry<'a> {
     // Size: 0xC
     pub header: FNameEntryHeader,
@@ -15,7 +14,7 @@ pub struct FNameEntry<'a> {
 
 impl<'a> FNameEntry<'a> {
     pub fn from_header_ptr(entry_ptr: *const FNameEntryHeader) -> Self {
-        let value_ptr: *const i8 = unsafe { std::mem::transmute(entry_ptr.byte_offset(FNAME_ENTRY_HEADER_SIZE)) };
+        let value_ptr: *const i8 = unsafe { std::mem::transmute(entry_ptr.byte_offset(std::mem::size_of::<FNameEntryHeader>() as isize)) };
         let value = unsafe { CStr::from_ptr(value_ptr) };
 
         Self {
@@ -59,9 +58,9 @@ impl<'a> FNameEntry<'a> {
 }
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(4))]
 pub struct FNameEntryHeader {
-    pub next_hash: *mut FNameEntryHeader,
+    pub next_hash: [u8; 8],
     name_idx: u32le
 }
 

@@ -4,6 +4,9 @@ pub use f_actor_tick_function::*;
 mod f_auto_complete_node;
 pub use f_auto_complete_node::*;
 
+mod f_box_sphere_bounds;
+pub use f_box_sphere_bounds::*;
+
 mod f_chunked_fixed_uobject_array;
 pub use f_chunked_fixed_uobject_array::*;
 
@@ -13,11 +16,17 @@ pub use f_network_notify::*;
 mod f_output_device;
 pub use f_output_device::*;
 
+mod f_physics_volume_changed;
+pub use f_physics_volume_changed::*;
+
 mod f_rep_attachment;
 pub use f_rep_attachment::*;
 
 mod f_rep_movement;
 pub use f_rep_movement::*;
+
+mod f_rotation_conversion_cache;
+pub use f_rotation_conversion_cache::*;
 
 mod f_rotator;
 pub use f_rotator::*;

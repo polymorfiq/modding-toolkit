@@ -1,7 +1,7 @@
 use crate::*;
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C, align(0x4))]
+#[repr(C, align(0x10))]
 pub struct FTransform {
     pub rotation: FQuat,
     pub translation: FVector,
