@@ -14,11 +14,23 @@ pub use f_name_entry::*;
 mod f_name;
 pub use f_name::*;
 
+mod f_quat;
+pub use f_quat::*;
+
 mod f_string;
 pub use f_string::*;
 
+mod f_timer_handle;
+pub use f_timer_handle::*;
+
+mod f_transform;
+pub use f_transform::*;
+
 mod f_unique_net_id_repl;
 pub use f_unique_net_id_repl::*;
+
+mod f_weak_object_ptr;
+pub use f_weak_object_ptr::*;
 
 mod f_url;
 pub use f_url::*;
@@ -49,6 +61,9 @@ pub use t_name_entry_array::*;
 
 mod t_shared_ptr;
 pub use t_shared_ptr::*;
+
+mod t_sorted_map;
+pub use t_sorted_map::*;
 
 mod t_subclass_of;
 pub use t_subclass_of::*;

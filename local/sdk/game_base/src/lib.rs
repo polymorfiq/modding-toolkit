@@ -11,9 +11,9 @@ pub struct GameBase {
     addr_gobjects: Option<*const c_void>,
     addr_gnames: Option<*const c_void>,
     addr_get_display_name: Option<*const c_void>,
+    pub game_engine: Option<&'static UGameEngine<'static>>,
     game_instance: Option<&'static UGameInstance<'static>>,
-    world: Option<&'static UWorld<'static>>,
-    game_console: Option<&'static UConsole>
+    pub game_console: Option<&'static UConsole>
 }
 
 #[cfg(feature = "server-sdk")]
@@ -44,9 +44,9 @@ impl GameBase {
             addr_gobjects: None,
             addr_gnames: None,
             addr_get_display_name: None,
-            game_instance: None,
+            game_engine: None,
             game_console: None,
-            world: None
+            game_instance: None
         }
     }
 
@@ -94,7 +94,6 @@ impl GameBase {
     }
 
     pub fn search_game_objects_attempt(&mut self) -> bool {
-        let mut game_engine: Option<&UGameEngine> = None;
         let g_objects = self.gobjects();
 
         for i in 0..(g_objects.num_elements.to_native()-1) {
@@ -102,18 +101,17 @@ impl GameBase {
             let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
             let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
 
-            if obj_name == Some("/Engine/Transient.GameEngine".to_string()) {
-                game_engine = Some(item.expect("Unable to unwrap Game Engine item").object::<UGameEngine>().expect("Unable to unwrap Game Engine object"));
-                let game_instance = game_engine.expect("Failed to unwrap Game Engine").game_instance();
-                self.game_instance = game_instance;
-                self.world = if game_instance.is_some() { Some(game_instance.unwrap().world_context().world()) } else { None };
+            if obj_name == Some("/Script/Engine.GameEngine".to_string()) {
+                self.game_engine = item.expect("Unable to unwrap Game Engine item").object::<UGameEngine>();
 
             } else if obj_name == Some("/Engine/Transient.GameEngine.GGameViewportClient.Console".to_string()) {
                 self.game_console = item.expect("Unable to unwrap Game Console Item").object::<UConsole>();
+            } else if obj_name == Some("/Script/Engine.Default__GameInstance".to_string()) {
+                self.game_instance = item.expect("Unable to unwrap Game Instance Item").object::<UGameInstance>();
             }
         }
 
-        if game_engine.is_some() && self.game_console.is_some() {
+        if self.game_engine.is_some() && self.game_console.is_some() && self.game_instance.is_some() {
             true
         } else {
             false
@@ -141,12 +139,19 @@ impl GameBase {
         unsafe { *ptr }
     }
 
-    pub fn game_instance(&self) -> &'static UGameInstance { self.game_instance.unwrap() }
-    pub fn world(&self) -> &'static UWorld { self.world.unwrap() }
+    pub fn game_instance(&self) -> Option<&'static UGameInstance> {
+        self.game_instance
+    }
+
+    pub fn world(&self) -> Option<&'static UWorld> {
+        match self.game_instance() {
+            Some(instance) => Some(instance.world_context().world()),
+            None => None
+        }
+    }
     pub fn console(&self) -> Option<&'static UConsole> { self.game_console }
 
     pub fn get_display_name_fn(&self) -> Option<fn(*const FName) -> *const FNameEntryHeader> {
-        println!("self.addr_get_display_name: {:?}", self.addr_get_display_name);
         match self.addr_get_display_name {
             Some(fn_addr) => {
                 let get_display_name: fn(*const FName) -> *const FNameEntryHeader = unsafe {

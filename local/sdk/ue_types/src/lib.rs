@@ -21,8 +21,17 @@ mod tests {
     
     #[test]
     fn correct_data_sizes() {
-        assert_eq!(std::mem::size_of::<FNameEntry>(), 0x18);
+        assert_eq!(std::mem::size_of::<FVector2D>(), 0x8);
+        assert_eq!(std::mem::size_of::<FQuat>(), 0x10);
+        assert_eq!(std::mem::size_of::<FIntVector>(), 0xC);
+        assert_eq!(std::mem::size_of::<FRotator>(), 0xC);
+        assert_eq!(std::mem::size_of::<FVector>(), 0xC);
+        assert_eq!(std::mem::size_of::<FTransform>(), 0x30);
+        assert_eq!(std::mem::size_of::<FNameEntry>(), 0x20);
+        assert_eq!(std::mem::size_of::<TSharedPtr<UnknownType>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TSubclassOf<UnknownType>>(), 0x8);
         assert_eq!(std::mem::size_of::<TEnumAsByte<UnknownType>>(), 0x1);
+        assert_eq!(std::mem::size_of::<TWeakObjectPtr<UnknownType>>(), 0x8);
         assert_eq!(std::mem::size_of::<TWeakPtr<UnknownType>>(), 0x10);
         assert_eq!(std::mem::size_of::<TWeakPtr<FOutputDevice>>(), 0x10);
         assert_eq!(std::mem::size_of::<FExec>(), 0x8);
@@ -41,5 +50,10 @@ mod tests {
         assert_eq!(std::mem::size_of::<UEngine>(), 0xEC8);
         assert_eq!(std::mem::size_of::<UGameEngine>(), 0xF18);
         assert_eq!(std::mem::size_of::<UConsole>(), 0x140);
+        assert_eq!(std::mem::size_of::<UActorComponent>(), 0x100);
+        assert_eq!(std::mem::size_of::<USceneComponent>(), 0x270);
+        assert_eq!(std::mem::size_of::<AController>(), 0x3C8);
+        assert_eq!(std::mem::align_of::<APlayerController>(), 0x8);
+        assert_eq!(std::mem::size_of::<APlayerController>(), 0x698);
     }
 }

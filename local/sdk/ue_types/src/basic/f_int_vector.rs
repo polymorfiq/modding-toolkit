@@ -1,5 +1,10 @@
+use simple_endian::*;
+
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
 pub struct FIntVector {
-    _data: [u8; 0xC]
+    // Size: 0xC
+    x: i32le,
+    y: i32le,
+    z: i32le
 }

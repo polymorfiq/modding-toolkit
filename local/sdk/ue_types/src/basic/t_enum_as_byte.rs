@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x1))]
 pub struct TEnumAsByte<T> {
     pub data: u8,
     _phantom_a: PhantomData<T>

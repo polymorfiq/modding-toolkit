@@ -2,7 +2,7 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
-pub struct AActor {
+pub struct AActor<'a> {
     // Size: 0x0348
     pub base_object: UObject,
     pub primary_actor_tick: FActorTickFunction,
@@ -15,7 +15,7 @@ pub struct AActor {
     pub custom_time_dilation: f32,
     pub creation_time: f32,
     pub attachment_replication: FRepAttachment,
-    pub owner: *const AActor,
+    pub owner: *const AActor<'a>,
     pub net_driver_name: FName,
     pub role: TEnumAsByte<UnknownType>,
     pub net_dormancy: TEnumAsByte<UnknownType>,
@@ -31,8 +31,8 @@ pub struct AActor {
     pub net_priority: f32,
     pub cached_last_render_time: f32,
     pub instigator: *const UnknownType,
-    pub children: TArray<*const AActor>,
-    pub root_component: *const UnknownType,
+    pub children: TArray<*const AActor<'a>>,
+    pub root_component: &'a USceneComponent,
     pub controlling_matinee_actors: TArray<UnknownType>,
     pub timer_handle_lifespan_expired: u64,
     pub layers: TArray<FName>,
@@ -62,7 +62,7 @@ pub struct AActor {
     _detach_fence: [u8; 0x10]
 }
 
-impl AActor {
+impl<'a> AActor<'a> {
     pub fn object(&self) -> UObject { self.base_object }
     pub fn name(&self) -> FName { self.object().name() }
     pub fn full_name(&self) -> String { self.object().full_name() }

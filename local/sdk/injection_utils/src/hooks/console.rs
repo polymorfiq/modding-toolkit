@@ -8,15 +8,18 @@ static_detour! {
 }
 
 type CommandInterceptShiv = fn(&UConsole, &FString) -> Result<bool, Box<dyn std::error::Error>>;
+static mut CMD_INTERCEPT_SHIV: Option<CommandInterceptShiv> = None;
+
 pub fn add_command_intercept(shiv_fn: CommandInterceptShiv) -> Result<(), Box<dyn std::error::Error>> {
     match GameBase::singleton().console() {
         Some(console) => {
             unsafe {
-                CommandIntercept.initialize(console._console_command(), call_intercept_shiv(shiv_fn))?;
+                CMD_INTERCEPT_SHIV = Some(shiv_fn);
+                CommandIntercept.initialize(console._console_command(), command_intercept_shiv)?;
                 CommandIntercept.enable()?;
             }
 
-            debug!("[{}]: Intercepting in-game console commands!", GameBase::singleton().mod_name);
+            debug!("[{}]: Intercepting in-game console commands!!", GameBase::singleton().mod_name);
             Ok(())
         },
 
@@ -26,20 +29,21 @@ pub fn add_command_intercept(shiv_fn: CommandInterceptShiv) -> Result<(), Box<dy
     }
 }
 
-fn call_intercept_shiv(shiv_fn: CommandInterceptShiv) -> impl Fn(*const UConsole, *const FString) {
-    return move |console: *const UConsole, cmd: *const FString| {
-        let console_ref = unsafe { console.as_ref::<'static>().unwrap() };
-        let cmd_ref = unsafe { cmd.as_ref::<'static>().unwrap() };
+fn command_intercept_shiv(console: *const UConsole, cmd: *const FString) {
+    let shiv = unsafe { CMD_INTERCEPT_SHIV };
 
-        match shiv_fn(console_ref, cmd_ref) {
-            Ok(do_forward_cmd) => {
-                if do_forward_cmd { CommandIntercept.call(console, cmd) };
-            }
+    if shiv.is_none() { return CommandIntercept.call(console, cmd) };
 
-            Err(err) => {
-                warning!("[{}]: Error intercepting console command: {:?}", GameBase::singleton().mod_name, err);
-                CommandIntercept.call(console, cmd)
-            }
+    let console_ref = unsafe { console.as_ref::<'static>().unwrap() };
+    let cmd_ref = unsafe { cmd.as_ref::<'static>().unwrap() };
+    match (shiv.unwrap())(console_ref, cmd_ref) {
+        Ok(do_forward_cmd) => {
+            if do_forward_cmd { CommandIntercept.call(console, cmd) };
+        }
+
+        Err(err) => {
+            warning!("[{}]: Error intercepting console command: {:?}", GameBase::singleton().mod_name, err);
+            CommandIntercept.call(console, cmd)
         }
     }
 }

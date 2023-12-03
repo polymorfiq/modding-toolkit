@@ -8,8 +8,8 @@ pub struct ULevel<'a> {
     pub base_object: UObject,
     pub base_asset_user_data: IInterfaceAssetUserData,
     pub url: FUrl,
-    pub actors: TArray<*const AActor>,
-    pub actors_for_gc: TArray<*const AActor>,
+    pub actors: TArray<*const AActor<'a>>,
+    pub actors_for_gc: TArray<*const AActor<'a>>,
     pub owning_world: *const UWorld<'a>,
     _other_stuff: [u8; 0x1C0],
     _phantom: PhantomData<&'a u8>

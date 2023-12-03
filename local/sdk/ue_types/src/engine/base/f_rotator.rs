@@ -1,5 +1,9 @@
+use simple_endian::*;
+
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x4))]
 pub struct FRotator {
-    _data: [u8; 0xC]
+    pitch: u32le,
+    yaw: u32le,
+    roll: u32le
 }

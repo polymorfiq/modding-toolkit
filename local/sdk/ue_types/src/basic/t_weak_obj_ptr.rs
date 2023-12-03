@@ -1,8 +1,9 @@
+use crate::*;
 use std::marker::PhantomData;
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x4))]
 pub struct TWeakObjectPtr<T> {
-    pub ptr: u64,
+    pub ptr: FWeakObjectPtr,
     _phantom: PhantomData<T>
 }

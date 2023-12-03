@@ -1,7 +1,7 @@
 use simple_endian::u32le;
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x8))]
 pub struct TArray<T> {
     // Size: 0x10
     pub data: *const T,

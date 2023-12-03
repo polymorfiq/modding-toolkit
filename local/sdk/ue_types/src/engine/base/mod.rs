@@ -37,8 +37,17 @@ pub use f_uobject_item::*;
 mod f_world_context;
 pub use f_world_context::*;
 
+mod force_feedback_values;
+pub use force_feedback_values::*;
+
 mod i_interface_asset_user_data;
 pub use i_interface_asset_user_data::*;
 
 mod i_nav_agent_interface;
 pub use i_nav_agent_interface::*;
+
+mod u_actor_component;
+pub use u_actor_component::*;
+
+mod u_scene_component;
+pub use u_scene_component::*;

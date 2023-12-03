@@ -6,7 +6,8 @@ members = [
     "sdk/ue_types",
     "sdk/injection_utils",
     "sdk/utils",
-    "mods/client/pathfinder"
+    "mods/client/pathfinder",
+    "mods/client/modding_debugger"
 ]
 
 [workspace.dependencies]
