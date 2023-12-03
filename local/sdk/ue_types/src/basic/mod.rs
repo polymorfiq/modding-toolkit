@@ -56,6 +56,9 @@ pub use t_indirect_array::*;
 mod t_map;
 pub use t_map::*;
 
+mod t_multicast_script_delegate;
+pub use t_multicast_script_delegate::*;
+
 mod t_name_entry_array;
 pub use t_name_entry_array::*;
 

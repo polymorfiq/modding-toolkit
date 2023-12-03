@@ -1,8 +1,8 @@
 pub mod base;
 pub use base::*;
 
-mod a_actor;
-pub use a_actor::*;
+pub mod actors;
+pub use actors::*;
 
 mod u_class;
 pub use u_class::*;

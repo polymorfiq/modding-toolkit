@@ -1,7 +1,7 @@
 use crate::*;
 use simple_endian::u32le;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FName {
     // Size: 0x0C
@@ -20,5 +20,13 @@ impl std::string::ToString for FName {
             Ok(entry) => entry.to_string(),
             Err(err_str) => format!("<error_parsing_fname: {}>", err_str).to_string()
         }
+    }
+}
+
+impl std::fmt::Debug for FName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("FName")
+         .field("str", &self.to_string())
+         .finish()
     }
 }

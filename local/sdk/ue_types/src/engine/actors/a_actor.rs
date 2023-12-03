@@ -1,11 +1,12 @@
 use crate::*;
+use std::marker::PhantomData;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
 pub struct AActor<'a> {
     // Size: 0x0348
     pub base_object: UObject,
-    pub primary_actor_tick: FActorTickFunction,
+    pub primary_actor_tick: FActorTickFunction<'a>,
     b_something: u32,
     pub b_hidden: u8,
     pub remote_role: TEnumAsByte<UnknownType>,
@@ -32,7 +33,7 @@ pub struct AActor<'a> {
     pub cached_last_render_time: f32,
     pub instigator: *const UnknownType,
     pub children: TArray<*const AActor<'a>>,
-    pub root_component: &'a USceneComponent,
+    pub root_component: *const USceneComponent<'a>,
     pub controlling_matinee_actors: TArray<UnknownType>,
     pub timer_handle_lifespan_expired: u64,
     pub layers: TArray<FName>,
@@ -59,7 +60,8 @@ pub struct AActor<'a> {
     _owned_components: [u8; 0x50],
     pub instance_components: TArray<UnknownType>,
     pub blueprint_created_components: TArray<UnknownType>,
-    _detach_fence: [u8; 0x10]
+    _detach_fence: [u8; 0x10],
+    _phantom: PhantomData<&'a u8>
 }
 
 impl<'a> AActor<'a> {

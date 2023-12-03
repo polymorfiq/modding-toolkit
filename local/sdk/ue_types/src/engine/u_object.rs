@@ -14,7 +14,7 @@ pub mod object_flags {
 }
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x8))]
 pub struct UObject {
     // Size: 0x30
     base: UObjectBase
@@ -48,13 +48,13 @@ impl UObject {
 }
 
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x8))]
 struct UObjectBase {
     // Size: 0x30
     pub vf_table: *const *const UnknownType,
     pub obj_flags: u32,
     internal_idx: u32le,
-    pub class_private: *mut UClass,
+    pub class_private: *const UClass,
     name_private: FName,
     _padding: [u8; 4],
     outer_private: *const UObject

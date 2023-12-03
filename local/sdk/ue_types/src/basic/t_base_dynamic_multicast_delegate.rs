@@ -1,5 +1,8 @@
+use crate::*;
+
 #[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(0x8))]
 pub struct TBaseDynamicMulticastDelegate {
-    _unknown: [u8; 0x10]
+    // Size: 0x10
+    pub base_delegate: TMulticastScriptDelegate<FWeakObjectPtr>
 }

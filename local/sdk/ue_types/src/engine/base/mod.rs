@@ -37,6 +37,9 @@ pub use f_seamless_travel_handler::*;
 mod f_struct_base_chain;
 pub use f_struct_base_chain::*;
 
+mod f_tick_function;
+pub use f_tick_function::*;
+
 mod f_uobject_array;
 pub use f_uobject_array::*;
 

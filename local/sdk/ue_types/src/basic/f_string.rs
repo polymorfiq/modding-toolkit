@@ -1,7 +1,7 @@
 use crate::*;
 use widestring::{WideChar, WideString};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FString {
     // Size: 0x10
@@ -43,5 +43,13 @@ impl From<WideString> for FString {
         let str_array = TArray::<WideChar>::from_data(char_ptr, str_len, capacity);
 
         FString{data: str_array}
+    }
+}
+
+impl std::fmt::Debug for FString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("FString")
+         .field("str", &self.to_string())
+         .finish()
     }
 }

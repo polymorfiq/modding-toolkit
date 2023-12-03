@@ -2,16 +2,16 @@ use crate::*;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C, align(0x8))]
-pub struct USceneComponent {
+pub struct USceneComponent<'a> {
     // Size: 0x270
-    base_actor_component: UActorComponent,
+    base_actor_component: UActorComponent<'a>,
     cached_level_collection: *const UnknownType,
     physics_volume: TWeakObjectPtr<UnknownType>,
-    attach_parent: *const USceneComponent,
+    attach_parent: *const USceneComponent<'a>,
     attach_socket_name: FName,
     _padding_a: [u8; 4],
-    attach_children: TArray<*const USceneComponent>,
-    client_attached_children: TArray<*const USceneComponent>,
+    attach_children: TArray<*const USceneComponent<'a>>,
+    client_attached_children: TArray<*const USceneComponent<'a>>,
     net_old_attached_socket_name: FName,
     _padding_b: [u8; 4],
     net_old_attached_parent: *const UnknownType,

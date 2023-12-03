@@ -25,19 +25,20 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
         ("getplayerpos", _) => {
             let g_objects = GameBase::singleton().gobjects();
 
+            let mut player_i = 0;
             for i in 0..(g_objects.num_elements.to_native()-1) {
                 let item = g_objects.item_at_idx(i as usize);
                 if item.is_none() { continue };
 
                 let obj = item.unwrap().object::<UObject>();
                 if obj.is_none() { continue };
-                if obj.unwrap().full_name() != "/Script/Engine.LocalPlayer".to_string() { continue };
+                if obj.unwrap().full_name() != "/Script/Engine.Default__Character".to_string() { continue };
 
-                let local_player = item.unwrap().object::<ULocalPlayer>();
-                if local_player.is_none() { continue };
-                let local_player = local_player.unwrap();
-
-                logln!("Players[{:?}]: {:?} - {:?}", i, local_player.base_player, local_player);
+                let controller = item.unwrap().object::<ACharacter>();
+                if controller.is_none() { continue };
+                
+                logln!("Players[{:?}]: {:?}", player_i, ACharacter::get_nav_agent_location(item.unwrap().object_addr as *const ACharacter));
+                player_i += 1;
             }
 
             false

@@ -63,6 +63,7 @@ pub struct APlayerController<'a> {
     pub last_completed_seamless_travel_count: u16le,
     pub current_clickable_primitives: TWeakObjectPtr<UnknownType>,
     pub _current_touchable_primitives: [u8; 0x58],
+    _padding_h: [u8; 4],
     pub current_input_stack: TArray<UnknownType>,
     pub inactive_state_input_component: *const UnknownType,
     _bf_608: u8,
@@ -74,16 +75,32 @@ pub struct APlayerController<'a> {
     _time_handle_client_commit_map_change: FTimerHandle,
     _bf_640: u8,
     _padding_j: [u8; 3],
-    pub audio_listener_component: TWeakObjectPtr<USceneComponent>,
-    pub audio_listener_attenuation_component: TWeakObjectPtr<USceneComponent>,
+    pub audio_listener_component: TWeakObjectPtr<USceneComponent<'a>>,
+    pub audio_listener_attenuation_component: TWeakObjectPtr<USceneComponent<'a>>,
     pub audio_listener_location_override: FVector,
     pub audio_listener_rotation_override: FRotator,
     pub audio_listener_attenuation_override: FVector,
-    pub spectator_pawn: *const UnknownType,
+    pub spectator_pawn: Option<&'a APawn<'a>>,
     pub last_retry_player_time: u32le,
     pub b_is_local_player_controller: u8,
     _padding_k: [u8; 3],
     pub spawn_location: FVector,
     _bf_694: u8,
     _padding_l: [u8; 3]
+}
+
+impl APlayerController<'_> {
+    pub fn get_nav_agent_location(&self) -> FVector {
+        let vf_table = self.base_controller.base_nav_agent_interface.vftable;
+        let get_nav_agent_location: fn(*const AController, *mut FVector) = unsafe {
+            std::mem::transmute(*vf_table.byte_offset(0x18))
+        };
+
+        let mut result: FVector = FVector{x: 0f32, y: 0f32, z: 0f32};
+        unsafe { 
+            (get_nav_agent_location)(std::ptr::addr_of!(self.base_controller).byte_offset(std::mem::size_of::<AActor>() as isize), std::ptr::addr_of_mut!(result));
+        }
+        
+        result
+    }
 }

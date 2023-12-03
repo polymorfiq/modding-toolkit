@@ -35,9 +35,13 @@ mod tests {
         assert_eq!(std::mem::align_of::<TSubclassOf<UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<TEnumAsByte<UnknownType>>(), 0x1);
         assert_eq!(std::mem::align_of::<TWeakPtr<UnknownType>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TMulticastScriptDelegate<UnknownType>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TBaseDynamicMulticastDelegate>(), 0x8);
         assert_eq!(std::mem::align_of::<FExec>(), 0x8);
         assert_eq!(std::mem::align_of::<FAutoCompleteNode>(), 0x8);
         assert_eq!(std::mem::align_of::<FGuid>(), 0x4);
+        assert_eq!(std::mem::align_of::<FTickFunction>(), 0x8);
+        assert_eq!(std::mem::align_of::<FActorTickFunction>(), 0x8);
         assert_eq!(std::mem::align_of::<AActor>(), 0x8);
         assert_eq!(std::mem::align_of::<UObject>(), 0x8);
         assert_eq!(std::mem::align_of::<UField>(), 0x8);
@@ -51,6 +55,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<USceneComponent>(), 0x10);
         assert_eq!(std::mem::align_of::<AController>(), 0x8);
         assert_eq!(std::mem::align_of::<APlayerController>(), 0x8);
+        assert_eq!(std::mem::align_of::<APawn>(), 0x8);
     }
     
     #[test]
@@ -72,9 +77,13 @@ mod tests {
         assert_eq!(std::mem::size_of::<TWeakObjectPtr<UnknownType>>(), 0x8);
         assert_eq!(std::mem::size_of::<TWeakPtr<UnknownType>>(), 0x10);
         assert_eq!(std::mem::size_of::<TWeakPtr<FOutputDevice>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TMulticastScriptDelegate<UnknownType>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TBaseDynamicMulticastDelegate>(), 0x10);
         assert_eq!(std::mem::size_of::<FExec>(), 0x8);
         assert_eq!(std::mem::size_of::<FAutoCompleteNode>(), 0x28);
         assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
+        assert_eq!(std::mem::size_of::<FTickFunction>(), 0x50);
+        assert_eq!(std::mem::size_of::<FActorTickFunction>(), 0x58);
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject>(), 0x30);
         assert_eq!(std::mem::size_of::<UField>(), 0x38);
@@ -92,5 +101,6 @@ mod tests {
         assert_eq!(std::mem::size_of::<USceneComponent>(), 0x270);
         assert_eq!(std::mem::size_of::<AController>(), 0x3C8);
         assert_eq!(std::mem::size_of::<APlayerController>(), 0x698);
+        assert_eq!(std::mem::size_of::<APawn>(), 0x3A8);
     }
 }
