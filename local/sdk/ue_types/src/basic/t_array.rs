@@ -33,7 +33,14 @@ impl<T> TArray<T> {
 impl<T: Copy> TArray<T> {
     pub fn at_index<'b>(&self, idx: usize) -> Result<&'b T, String> {
         if idx < self.array_num.to_native() as usize {
-            unsafe { Ok(self.data.offset(idx as isize).as_ref::<'b>().unwrap()) }
+            let item_ptr = unsafe { self.data.offset(idx as isize) };
+            let item = unsafe { item_ptr.as_ref::<'b>() };
+
+            if item.is_some() {
+                Ok(item.unwrap())
+            } else {
+                Err(format!("TArray - Could not convert pointer into address... {:p}", item_ptr))
+            }
         } else {
             Err(format!("Index out of bounds: {}", idx))
         }

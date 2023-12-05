@@ -32,7 +32,8 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
 
                 let obj = item.unwrap().object::<UObject>();
                 if obj.is_none() { continue };
-                if obj.unwrap().full_name() != "/Script/Engine.Default__Character".to_string() { continue };
+                let obj = obj.unwrap();
+                if obj.class().full_name() != "/Script/Engine.Default__Character".to_string() { continue };
 
                 let controller = item.unwrap().object::<ACharacter>();
                 if controller.is_none() { continue };

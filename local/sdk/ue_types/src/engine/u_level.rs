@@ -8,7 +8,7 @@ pub struct ULevel<'a> {
     pub base_object: UObject,
     pub base_asset_user_data: IInterfaceAssetUserData,
     pub url: FUrl,
-    pub actors: TArray<*const AActor<'a>>,
+    pub actors: TArray<&'a AActor<'a>>,
     pub actors_for_gc: TArray<*const AActor<'a>>,
     pub owning_world: *const UWorld<'a>,
     _other_stuff: [u8; 0x1C0],
@@ -17,7 +17,7 @@ pub struct ULevel<'a> {
 
 impl<'a> ULevel<'a> {
     pub fn object(&self) -> UObject { self.base_object }
-    pub fn actors(&self) -> TArray<*const AActor> { self.actors }
+    pub fn actors(&self) -> TArray<&'a AActor<'a>> { self.actors }
     pub fn name(&self) -> FName { self.object().name() }
     pub fn full_name(&self) -> String { self.object().full_name() }
     pub fn owning_world(&self) -> &UWorld { unsafe { self.owning_world.as_ref::<'a>().unwrap() } }

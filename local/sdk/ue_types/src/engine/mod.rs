@@ -39,3 +39,6 @@ pub use u_struct::*;
 
 mod u_world;
 pub use u_world::*;
+
+mod u_world_proxy;
+pub use u_world_proxy::*;
