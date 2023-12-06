@@ -1,6 +1,12 @@
 mod allocators;
 pub use allocators::*;
 
+mod f_box;
+pub use f_box::*;
+
+mod f_color;
+pub use f_color::*;
+
 mod f_exec;
 pub use f_exec::*;
 
@@ -84,6 +90,9 @@ pub use t_multicast_script_delegate::*;
 
 mod t_name_entry_array;
 pub use t_name_entry_array::*;
+
+mod t_ref_count_ptr;
+pub use t_ref_count_ptr::*;
 
 mod t_shared_ptr;
 pub use t_shared_ptr::*;

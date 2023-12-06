@@ -32,6 +32,8 @@ mod tests {
         assert_eq!(std::mem::align_of::<FIntVector>(), 0x4);
         assert_eq!(std::mem::align_of::<FRotator>(), 0x4);
         assert_eq!(std::mem::align_of::<FVector>(), 0x4);
+        assert_eq!(std::mem::align_of::<FColor>(), 0x4);
+        assert_eq!(std::mem::align_of::<FBox>(), 0x4);
         assert_eq!(std::mem::align_of::<FGCObject>(), 0x8);
         assert_eq!(std::mem::align_of::<FBoxSphereBounds>(), 0x4);
         assert_eq!(std::mem::align_of::<FRotationConversionCache>(), 0x8);
@@ -82,6 +84,8 @@ mod tests {
         assert_eq!(std::mem::size_of::<FIntVector>(), 0xC);
         assert_eq!(std::mem::size_of::<FRotator>(), 0xC);
         assert_eq!(std::mem::size_of::<FVector>(), 0xC);
+        assert_eq!(std::mem::size_of::<FColor>(), 0x4);
+        assert_eq!(std::mem::size_of::<FBox>(), 0x1C);
         assert_eq!(std::mem::size_of::<FGCObject>(), 0x10);
         assert_eq!(std::mem::size_of::<FRotationConversionCache>(), 0x20);
         assert_eq!(std::mem::size_of::<FPhysicsVolumeChanged>(), 0x10);
@@ -112,7 +116,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
-        assert_eq!(std::mem::size_of::<ULevel>(), 0x288);
+        assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);
         assert_eq!(std::mem::size_of::<FWorldPSCPool>(), 0x58);
         assert_eq!(std::mem::size_of::<UWorld>(), 0x730);
         assert_eq!(std::mem::size_of::<FSeamlessTravelHandler>(), 0xA8);
