@@ -25,3 +25,18 @@ pub struct APawn<'a> {
     pub last_control_input_vector: FVector,
     _padding_d: [u8; 4]
 }
+
+impl<'a> APawn<'a> {
+    pub fn get_nav_agent_location(&self) -> FVector {
+        let get_nav_agent_location: fn(*const APawn, *mut FVector) = unsafe {
+            std::mem::transmute(0x7FF74B595650 as *const fn(*const APawn, *mut FVector))
+        };
+
+        let mut result: FVector = FVector{x: 0f32, y: 0f32, z: 0f32};
+        unsafe { 
+            (get_nav_agent_location)(std::ptr::addr_of!(*self).byte_offset(std::mem::size_of::<AActor>() as isize), std::ptr::addr_of_mut!(result));
+        }
+        
+        result
+    }
+}

@@ -119,10 +119,9 @@ impl GameBase {
         let world = self.world();
         if world.is_none() { return None };
 
-        // unsafe {
-        //     world.unwrap().owning_game_instance.as_ref::<'static>()
-        // }
-        None
+        unsafe {
+            world.unwrap().owning_game_instance.as_ref::<'static>()
+        }
     }
 
     pub fn level(&self) -> Option<&'static ULevel> {

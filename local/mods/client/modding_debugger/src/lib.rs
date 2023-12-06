@@ -18,8 +18,7 @@ fn mod_main(base_addr: *const c_void) {
 }
 
 fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {
-    let mut cmd_str = cmd.to_string();
-    cmd_str.truncate(cmd_str.len()-1); // Remove null byte off end of string
+    let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
         (_, Some(("world", args))) => {

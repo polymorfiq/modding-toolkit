@@ -1,5 +1,4 @@
 use crate::*;
-use std::marker::PhantomData;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -10,8 +9,12 @@ pub struct UGameInstance<'a> {
     pub local_players: TArray<*const ULocalPlayer<'a>, FDefaultAllocator>,
     pub online_session: *const UnknownType,
     pub referenced_objects: TArray<*const UObject, FDefaultAllocator>,
-    _phantom: PhantomData<&'a u8>,
-    // More stuff...
+    pub notify_pre_client_travel_delegates: TMulticastDelegate<UnknownType, UnknownType>,
+    pub on_play_together_event_received_delegate_handle: FDelegateHandle,
+    pub pie_map_name: FString,
+    pub timer_manager: *const UnknownType,
+    pub latent_action_manager: *const UnknownType,
+    pub subsystem_collection: FSubsystemCollection<UnknownType>
 }
 
 impl<'a> UGameInstance<'a> {

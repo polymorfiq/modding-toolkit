@@ -18,29 +18,37 @@ fn mod_main(base_addr: *const c_void) {
 }
 
 fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {
-    let mut cmd_str = cmd.to_string();
-    cmd_str.truncate(cmd_str.len()-1); // Remove null byte off end of string
+    let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
         ("getplayerpos", _) => {
-            let g_objects = GameBase::singleton().gobjects();
+            let game_instance = GameBase::singleton().game_instance();
+            if game_instance.is_none() {
+                logln!("GameInstance not found?!");
+                return Ok(false)
+            };
+            let game_instance = game_instance.unwrap();
 
-            let mut player_i = 0;
-            for i in 0..(g_objects.num_elements.to_native()-1) {
-                let item = g_objects.item_at_idx(i as usize);
-                if item.is_none() { continue };
-
-                let obj = item.unwrap().object::<UObject>();
-                if obj.is_none() { continue };
-                let obj = obj.unwrap();
-                if obj.class().full_name() != "/Script/Engine.Default__Character".to_string() { continue };
-
-                let controller = item.unwrap().object::<ACharacter>();
-                if controller.is_none() { continue };
-                
-                logln!("Players[{:?}]: {:?}", player_i, ACharacter::get_nav_agent_location(item.unwrap().object_addr as *const ACharacter));
-                player_i += 1;
+            let local_player = game_instance.local_players.at_index(0);
+            if !local_player.is_ok() {
+                logln!("Local Player not found?!");
+                return Ok(false)
+            };
+            let local_player = unsafe { (*local_player.unwrap()).as_ref::<'static>() };
+            if local_player.is_none() {
+                logln!("Local Player could not be dereferenced?!");
+                return Ok(false)
             }
+            let local_player = local_player.unwrap();
+
+            let pawn = local_player.base_player.player_controller.base_controller.pawn;
+            if pawn.is_none() {
+                logln!("Could not find pawn?!");
+                return Ok(false)
+            }
+
+
+            logln!("Player Position: {:?}", pawn.unwrap().get_nav_agent_location());
 
             false
         }
