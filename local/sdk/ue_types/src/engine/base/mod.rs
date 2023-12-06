@@ -10,6 +10,9 @@ pub use f_box_sphere_bounds::*;
 mod f_chunked_fixed_uobject_array;
 pub use f_chunked_fixed_uobject_array::*;
 
+mod f_gc_object;
+pub use f_gc_object::*;
+
 mod f_network_notify;
 pub use f_network_notify::*;
 
@@ -36,6 +39,12 @@ pub use f_seamless_travel_handler::*;
 
 mod f_struct_base_chain;
 pub use f_struct_base_chain::*;
+
+mod f_subsystem_collection_base;
+pub use f_subsystem_collection_base::*;
+
+mod f_subsystem_collection;
+pub use f_subsystem_collection::*;
 
 mod f_tick_function;
 pub use f_tick_function::*;

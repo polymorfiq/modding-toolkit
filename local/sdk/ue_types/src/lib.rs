@@ -21,11 +21,18 @@ mod tests {
 
     #[test]
     fn correct_alignments() {
+        assert_eq!(std::mem::align_of::<FHeapAllocatorForAnyElementType>(), 0x8);
+        assert_eq!(std::mem::align_of::<TInlineAllocator<5, u32, 0x8, FHeapAllocatorForAnyElementType>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TInlineAllocator<5, u32, 0x10, FHeapAllocatorForAnyElementType>>(), 0x10);
+        assert_eq!(std::mem::align_of::<FRelativeBitReference>(), 0x4);
+        assert_eq!(std::mem::align_of::<TConstSetBitIterator<FDefaultBitArrayAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TBitArray<FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<FVector2D>(), 0x4);
         assert_eq!(std::mem::align_of::<FQuat>(), 0x4);
         assert_eq!(std::mem::align_of::<FIntVector>(), 0x4);
         assert_eq!(std::mem::align_of::<FRotator>(), 0x4);
         assert_eq!(std::mem::align_of::<FVector>(), 0x4);
+        assert_eq!(std::mem::align_of::<FGCObject>(), 0x8);
         assert_eq!(std::mem::align_of::<FBoxSphereBounds>(), 0x4);
         assert_eq!(std::mem::align_of::<FRotationConversionCache>(), 0x8);
         assert_eq!(std::mem::align_of::<FPhysicsVolumeChanged>(), 0x8);
@@ -37,6 +44,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<TWeakPtr<UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<TMulticastScriptDelegate<UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<TBaseDynamicMulticastDelegate>(), 0x8);
+        assert_eq!(std::mem::align_of::<FSubsystemCollection<UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FExec>(), 0x8);
         assert_eq!(std::mem::align_of::<FAutoCompleteNode>(), 0x8);
         assert_eq!(std::mem::align_of::<FGuid>(), 0x4);
@@ -45,9 +53,13 @@ mod tests {
         assert_eq!(std::mem::align_of::<AActor>(), 0x8);
         assert_eq!(std::mem::align_of::<UObject>(), 0x8);
         assert_eq!(std::mem::align_of::<UField>(), 0x8);
-        assert_eq!(std::mem::align_of::<TArray<UObject>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TArray<UObject, FDefaultAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TSparseArrayBaseIterator<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FString>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
+        assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
         assert_eq!(std::mem::align_of::<UWorld>(), 0x8);
         assert_eq!(std::mem::align_of::<UGameEngine>(), 0x8);
         assert_eq!(std::mem::align_of::<UConsole>(), 0x8);
@@ -60,11 +72,17 @@ mod tests {
     
     #[test]
     fn correct_data_sizes() {
+        assert_eq!(std::mem::size_of::<FHeapAllocatorForAnyElementType>(), 0x8);
+        assert_eq!(std::mem::size_of::<TInlineAllocator<5, *const UnknownType, 0x8, FHeapAllocatorForAnyElementType>>(), 0x30);
+        assert_eq!(std::mem::size_of::<FRelativeBitReference>(), 0x8);
+        assert_eq!(std::mem::size_of::<TConstSetBitIterator<FDefaultBitArrayAllocator>>(), 0x20);
+        assert_eq!(std::mem::size_of::<TBitArray<FDefaultBitArrayAllocator>>(), 0x20);
         assert_eq!(std::mem::size_of::<FVector2D>(), 0x8);
         assert_eq!(std::mem::size_of::<FQuat>(), 0x10);
         assert_eq!(std::mem::size_of::<FIntVector>(), 0xC);
         assert_eq!(std::mem::size_of::<FRotator>(), 0xC);
         assert_eq!(std::mem::size_of::<FVector>(), 0xC);
+        assert_eq!(std::mem::size_of::<FGCObject>(), 0x10);
         assert_eq!(std::mem::size_of::<FRotationConversionCache>(), 0x20);
         assert_eq!(std::mem::size_of::<FPhysicsVolumeChanged>(), 0x10);
         assert_eq!(std::mem::size_of::<FBoxSphereBounds>(), 0x1C);
@@ -79,6 +97,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<TWeakPtr<FOutputDevice>>(), 0x10);
         assert_eq!(std::mem::size_of::<TMulticastScriptDelegate<UnknownType>>(), 0x10);
         assert_eq!(std::mem::size_of::<TBaseDynamicMulticastDelegate>(), 0x10);
+        assert_eq!(std::mem::size_of::<FSubsystemCollection<UnknownType>>(), 0xC8);
         assert_eq!(std::mem::size_of::<FExec>(), 0x8);
         assert_eq!(std::mem::size_of::<FAutoCompleteNode>(), 0x28);
         assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
@@ -87,10 +106,14 @@ mod tests {
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject>(), 0x30);
         assert_eq!(std::mem::size_of::<UField>(), 0x38);
-        assert_eq!(std::mem::size_of::<TArray<UObject>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TArray<UObject, FDefaultAllocator>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TSparseArrayBaseIterator<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x28);
+        assert_eq!(std::mem::size_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x38);
+        assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x288);
+        assert_eq!(std::mem::size_of::<FWorldPSCPool>(), 0x58);
         assert_eq!(std::mem::size_of::<UWorld>(), 0x730);
         assert_eq!(std::mem::size_of::<FSeamlessTravelHandler>(), 0xA8);
         assert_eq!(std::mem::size_of::<FWorldContext>(), 0x278);

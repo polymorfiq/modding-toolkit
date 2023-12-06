@@ -7,7 +7,7 @@ pub struct UActorComponent<'a> {
     base_object: UObject,
     base_asset_data: IInterfaceAssetUserData,
     primary_component_tick: FActorTickFunction<'a>,
-    component_tags: TArray<FName>,
-    asset_user_data: TArray<*const UnknownType>,
+    component_tags: TArray<FName, FDefaultAllocator>,
+    asset_user_data: TArray<*const UnknownType, FDefaultAllocator>,
     _unknown: [u8; 0x50]
 }

@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 simple_endian = "0.2.1"
 widestring = "1.0.2"
+elain = "0.3.0"

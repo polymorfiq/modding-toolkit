@@ -11,7 +11,7 @@ pub struct FUrl {
     pub valid: u32le,
     pub map: FString,
     pub redirect_url: FString,
-    pub op: TArray<FString>,
+    pub op: TArray<FString, FDefaultAllocator>,
     pub portal: FString
 }
 
@@ -22,7 +22,7 @@ impl FUrl {
     pub fn valid(&self) -> u32 { self.valid.to_native() }
     pub fn map(&self) -> &FString { &self.map }
     pub fn redirect_url(&self) -> &FString { &self.redirect_url }
-    pub fn op(&self) -> &TArray<FString> { &self.op }
+    pub fn op(&self) -> &TArray<FString, FDefaultAllocator> { &self.op }
     pub fn portal(&self) -> &FString { &self.portal }
     pub fn to_string(&self) -> String {
         format!("{:?}://{:?}:{:?}/{:?}?{:?}", self.protocol.len(), self.host.len(), self.port, self.map.len(), self.portal.len())

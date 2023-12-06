@@ -7,9 +7,9 @@ pub struct UGameInstance<'a> {
     pub base_object: UObject,
     pub base_exec: FExec,
     pub world_context: *const FWorldContext<'a>,
-    pub local_players: TArray<*const ULocalPlayer<'a>>,
+    pub local_players: TArray<*const ULocalPlayer<'a>, FDefaultAllocator>,
     pub online_session: *const UnknownType,
-    pub referenced_objects: TArray<*const UObject>,
+    pub referenced_objects: TArray<*const UObject, FDefaultAllocator>,
     _phantom: PhantomData<&'a u8>,
     // More stuff...
 }

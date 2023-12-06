@@ -16,7 +16,7 @@ pub struct FTickFunction {
     pub tick_visited_g_frame_counter: u32le,
     pub tick_queued_g_frame_counter: u32le,
     pub task_pointer: *const UnknownType,
-    pub prerequisites: TArray<UnknownType>,
+    pub prerequisites: TArray<UnknownType, FDefaultAllocator>,
     pub next: *const UnknownType,
     pub relative_tick_cooldown: u32le,
     pub last_tick_time_seconds: u32le,

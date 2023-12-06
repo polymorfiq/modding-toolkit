@@ -11,12 +11,12 @@ pub struct UStruct {
     pub children: *const UField,
     pub property_size: u32le,
     pub min_alignment: u32le,
-    pub script: TArray<u8>,
+    pub script: TArray<u8, FDefaultAllocator>,
     pub property_link: *const UProperty,
     pub ref_link: *const UProperty,
     pub destructor_link: *const UProperty,
     pub post_construct_link: *const UProperty,
-    pub script_object_references: TArray<*const UObject>,
+    pub script_object_references: TArray<*const UObject, FDefaultAllocator>,
 }
 
 impl UStruct {

@@ -15,16 +15,16 @@ pub struct UClass {
     pub class_within: *const UClass,
     pub class_generated_by: *const UObject,
     pub config_name: FName, // 0xD8
-    pub class_reps: TArray<UnknownType>, // 248
-    pub net_fields: TArray<UField>,
+    pub class_reps: TArray<UnknownType, FDefaultAllocator>, // 248
+    pub net_fields: TArray<UField, FDefaultAllocator>,
     pub class_default_object: *const UObject, // 264
     pub func_map: TMap<FName, *const UnknownType>,
     pub super_func_map: TMap<FName, *const UnknownType>,
     _func_map_lock: u64,
-    pub interfaces: TArray<UnknownType>,
+    pub interfaces: TArray<UnknownType, FDefaultAllocator>,
     _ref_token_stream: [u8; 0x10],
     _ref_token_stream_critical: [u8; 0x28],
-    pub native_func_lookup_table: TArray<UnknownType>
+    pub native_func_lookup_table: TArray<UnknownType, FDefaultAllocator>
 }
 
 impl UClass {

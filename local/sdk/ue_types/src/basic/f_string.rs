@@ -5,7 +5,7 @@ use widestring::{WideChar, WideString};
 #[repr(C)]
 pub struct FString {
     // Size: 0x10
-    pub data: TArray<WideChar>
+    pub data: TArray<WideChar, FDefaultAllocator>
 }
 
 impl FString {
@@ -28,7 +28,7 @@ impl FString {
 impl std::string::ToString for FString {
     fn to_string (&self) -> String {
         match self.to_wide_string().to_string() {
-            Ok(string_data) => string_data,
+            Ok(string_data) => string_data.trim_end_matches([0x00 as char]).to_string(),
             _ => "<fstring_parse_error>".to_string()
         }
     }
@@ -40,7 +40,7 @@ impl From<WideString> for FString {
         let str_len = ws.len() as u32;
         let capacity = ws.capacity() as u32;
 
-        let str_array = TArray::<WideChar>::from_data(char_ptr, str_len, capacity);
+        let str_array = TArray::<WideChar, FDefaultAllocator>::from_data(char_ptr, str_len, capacity);
 
         FString{data: str_array}
     }

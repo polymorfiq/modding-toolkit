@@ -1,3 +1,5 @@
+mod allocators;
+pub use allocators::*;
 
 mod f_exec;
 pub use f_exec::*;
@@ -11,11 +13,17 @@ pub use f_int_vector::*;
 mod f_name_entry;
 pub use f_name_entry::*;
 
+mod f_multicast_delegate_base;
+pub use f_multicast_delegate_base::*;
+
 mod f_name;
 pub use f_name::*;
 
 mod f_quat;
 pub use f_quat::*;
+
+mod f_relative_bit_reference;
+pub use f_relative_bit_reference::*;
 
 mod f_string;
 pub use f_string::*;
@@ -41,11 +49,23 @@ pub use f_vector_2d::*;
 mod f_vector;
 pub use f_vector::*;
 
+mod t_aligned_bytes;
+pub use t_aligned_bytes::*;
+
 mod t_array;
 pub use t_array::*;
 
 mod t_base_dynamic_multicast_delegate;
 pub use t_base_dynamic_multicast_delegate::*;
+
+mod t_base_multicast_delegate;
+pub use t_base_multicast_delegate::*;
+
+mod t_bit_array;
+pub use t_bit_array::*;
+
+mod t_const_set_bit_iterator;
+pub use t_const_set_bit_iterator::*;
 
 mod t_enum_as_byte;
 pub use t_enum_as_byte::*;
@@ -56,6 +76,9 @@ pub use t_indirect_array::*;
 mod t_map;
 pub use t_map::*;
 
+mod t_multicast_delegate;
+pub use t_multicast_delegate::*;
+
 mod t_multicast_script_delegate;
 pub use t_multicast_script_delegate::*;
 
@@ -64,6 +87,9 @@ pub use t_name_entry_array::*;
 
 mod t_shared_ptr;
 pub use t_shared_ptr::*;
+
+mod t_sparse_array;
+pub use t_sparse_array::*;
 
 mod t_sorted_map;
 pub use t_sorted_map::*;

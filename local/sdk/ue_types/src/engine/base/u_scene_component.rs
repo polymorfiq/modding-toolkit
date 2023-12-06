@@ -10,8 +10,8 @@ pub struct USceneComponent<'a> {
     attach_parent: *const USceneComponent<'a>,
     attach_socket_name: FName,
     _padding_a: [u8; 4],
-    attach_children: TArray<*const USceneComponent<'a>>,
-    client_attached_children: TArray<*const USceneComponent<'a>>,
+    attach_children: TArray<*const USceneComponent<'a>, FDefaultAllocator>,
+    client_attached_children: TArray<*const USceneComponent<'a>, FDefaultAllocator>,
     net_old_attached_socket_name: FName,
     _padding_b: [u8; 4],
     net_old_attached_parent: *const UnknownType,
@@ -29,6 +29,6 @@ pub struct USceneComponent<'a> {
     relative_rotation_cache: FRotationConversionCache,
     physics_volume_changed_delegate: FPhysicsVolumeChanged,
     _f_transform_updated: [u8; 0x18],
-    scoped_movement_stack: TArray<UnknownType>,
+    scoped_movement_stack: TArray<UnknownType, FDefaultAllocator>,
     _unknown_b: [u8; 0x8]
 }
