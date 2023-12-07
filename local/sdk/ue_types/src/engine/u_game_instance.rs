@@ -2,11 +2,11 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
-pub struct UGameInstance<'a> {
+pub struct UGameInstance {
     pub base_object: UObject,
     pub base_exec: FExec,
-    pub world_context: *const FWorldContext<'a>,
-    pub local_players: TArray<*const ULocalPlayer<'a>, FDefaultAllocator>,
+    pub world_context: *const FWorldContext,
+    pub local_players: TArray<*const ULocalPlayer, FDefaultAllocator>,
     pub online_session: *const UnknownType,
     pub referenced_objects: TArray<*const UObject, FDefaultAllocator>,
     pub notify_pre_client_travel_delegates: TMulticastDelegate<UnknownType, UnknownType>,
@@ -17,9 +17,6 @@ pub struct UGameInstance<'a> {
     pub subsystem_collection: FSubsystemCollection<UnknownType>
 }
 
-impl<'a> UGameInstance<'a> {
-    pub fn object(&self) -> UObject { self.base_object }
-    pub fn name(&self) -> FName { self.object().name() }
-    pub fn full_name(&self) -> String { self.object().full_name() }
-    pub fn world_context(&self) -> &'a FWorldContext { unsafe { self.world_context.as_ref::<'a>().unwrap() } }
+impl UGameInstance {
+    pub fn world_context(&self) -> &FWorldContext { unsafe { self.world_context.as_ref().unwrap() } }
 }

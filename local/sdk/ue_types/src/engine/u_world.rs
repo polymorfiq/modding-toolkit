@@ -3,10 +3,10 @@ use simple_endian::u32le;
 
 #[derive(Debug, Clone)]
 #[repr(C, align(0x8))]
-pub struct UWorld<'a> {
+pub struct UWorld {
     pub base_object: UObject,
     pub base_network_notify: FNetworkNotify,
-    pub persistent_level: *const ULevel<'a>,
+    pub persistent_level: *const ULevel,
     pub net_driver: *const UnknownType,
     pub line_batch_comp: *const UnknownType,
     pub line_batch_comp_persistent: *const UnknownType,
@@ -34,17 +34,17 @@ pub struct UWorld<'a> {
     pub game_state: *const UnknownType,
     pub ai_system: *const UnknownType,
     pub avoidance_manager: *const UnknownType,
-    pub levels: TArray<*const ULevel<'a>, FDefaultAllocator>,
+    pub levels: TArray<*const ULevel, FDefaultAllocator>,
     pub level_collections: TArray<UnknownType, FDefaultAllocator>,
     pub active_level_collection_idx: u32le,
     pub audio_device_handle: u32le,
-    pub owning_game_instance: *const UGameInstance<'a>,
+    pub owning_game_instance: *const UGameInstance,
     pub parameter_collection_instances: TArray<UnknownType, FDefaultAllocator>,
     pub canvas_for_rendering_to_target: *const UnknownType,
     pub canvas_for_draw_material_to_render_target: *const UnknownType,
     pub scene: *const UnknownType,
-    pub controller_list: TArray<TWeakObjectPtr<AController<'a>>, FDefaultAllocator>,
-    pub player_controller_list: TArray<TWeakObjectPtr<APlayerController<'a>>, FDefaultAllocator>,
+    pub controller_list: TArray<TWeakObjectPtr<AController>, FDefaultAllocator>,
+    pub player_controller_list: TArray<TWeakObjectPtr<APlayerController>, FDefaultAllocator>,
     pub pawn_list: TArray<UnknownType, FDefaultAllocator>,
     pub auto_camera_actor_list: TArray<UnknownType, FDefaultAllocator>,
     pub non_default_physics_volume_list: TArray<UnknownType, FDefaultAllocator>,
@@ -101,26 +101,14 @@ pub struct UWorld<'a> {
     pub subsystem_collection: FSubsystemCollection<UnknownType>
 }
 
-impl<'a> UWorld<'a> {
-    pub fn level(&self) -> Option<&'a ULevel<'a>> {
+impl UWorld {
+    pub fn level(&self) -> Option<&ULevel> {
         if self.persistent_level != std::ptr::null() {
-            Some(unsafe { self.persistent_level.as_ref::<'a>().unwrap() })
+            Some(unsafe { self.persistent_level.as_ref().unwrap() })
         } else {
             None
         }
     }
-    
-    pub fn object(&self) -> UObject { self.base_object }
-    // pub fn name(&self) -> FName { self.object().name() }
-    // pub fn full_name(&self) -> String { self.object().full_name() }
-    // pub fn url(&self) -> FUrl { self.url }
-    // pub fn owning_game_instance(&self) -> Option<&UGameInstance> {
-    //     if self.owning_game_instance != std::ptr::null() {
-    //         Some(unsafe { self.owning_game_instance.as_ref::<'a>().unwrap() })
-    //     } else {
-    //         None
-    //     }
-    // }
 }
 
 #[derive(Debug, Clone)]

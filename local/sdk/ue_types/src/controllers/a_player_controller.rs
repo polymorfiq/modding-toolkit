@@ -3,10 +3,10 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 #[repr(C, align(0x8))]
-pub struct APlayerController<'a> {
+pub struct APlayerController {
     // Size: 0x0698
-    pub base_controller: AController<'a>,
-    pub player: *const UPlayer<'a>,
+    pub base_controller: AController,
+    pub player: *const UPlayer,
     pub acknowledge_pawn: *const UnknownType,
     pub controlling_dir_track_inst: *const UnknownType,
     pub my_hud: *const UnknownType,
@@ -19,7 +19,7 @@ pub struct APlayerController<'a> {
     pub smooth_target_view_rotation_speed: u32le,
     pub local_player_cached_lod_distance_factor: u32le,
     _padding_b: [u8; 4],
-    pub hidden_actors: TArray<&'a AActor<'a>, FDefaultAllocator>,
+    pub hidden_actors: TArray<*const AActor, FDefaultAllocator>,
     pub hidden_primitive_components: TArray<UnknownType, FDefaultAllocator>,
     pub b_render_primitive_components: u8,
     _padding_c: [u8; 3],
@@ -75,32 +75,16 @@ pub struct APlayerController<'a> {
     _time_handle_client_commit_map_change: FTimerHandle,
     _bf_640: u8,
     _padding_j: [u8; 3],
-    pub audio_listener_component: TWeakObjectPtr<USceneComponent<'a>>,
-    pub audio_listener_attenuation_component: TWeakObjectPtr<USceneComponent<'a>>,
+    pub audio_listener_component: TWeakObjectPtr<USceneComponent>,
+    pub audio_listener_attenuation_component: TWeakObjectPtr<USceneComponent>,
     pub audio_listener_location_override: FVector,
     pub audio_listener_rotation_override: FRotator,
     pub audio_listener_attenuation_override: FVector,
-    pub spectator_pawn: Option<&'a APawn<'a>>,
+    pub spectator_pawn: Option<*const APawn>,
     pub last_retry_player_time: u32le,
     pub b_is_local_player_controller: u8,
     _padding_k: [u8; 3],
     pub spawn_location: FVector,
     _bf_694: u8,
     _padding_l: [u8; 3]
-}
-
-impl APlayerController<'_> {
-    pub fn get_nav_agent_location(&self) -> FVector {
-        let vf_table = self.base_controller.base_nav_agent_interface.vftable;
-        let get_nav_agent_location: fn(*const AController, *mut FVector) = unsafe {
-            std::mem::transmute(*vf_table.byte_offset(0x18))
-        };
-
-        let mut result: FVector = FVector{x: 0f32, y: 0f32, z: 0f32};
-        unsafe { 
-            (get_nav_agent_location)(std::ptr::addr_of!(self.base_controller).byte_offset(std::mem::size_of::<AActor>() as isize), std::ptr::addr_of_mut!(result));
-        }
-        
-        result
-    }
 }

@@ -3,10 +3,10 @@ use std::marker::PhantomData;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
-pub struct AActor<'a> {
+pub struct AActor {
     // Size: 0x0348
     pub base_object: UObject,
-    pub primary_actor_tick: FActorTickFunction<'a>,
+    pub primary_actor_tick: FActorTickFunction,
     b_something: u32,
     pub b_hidden: u8,
     pub remote_role: TEnumAsByte<UnknownType>,
@@ -16,7 +16,7 @@ pub struct AActor<'a> {
     pub custom_time_dilation: f32,
     pub creation_time: f32,
     pub attachment_replication: FRepAttachment,
-    pub owner: *const AActor<'a>,
+    pub owner: *const AActor,
     pub net_driver_name: FName,
     pub role: TEnumAsByte<UnknownType>,
     pub net_dormancy: TEnumAsByte<UnknownType>,
@@ -32,8 +32,8 @@ pub struct AActor<'a> {
     pub net_priority: f32,
     pub cached_last_render_time: f32,
     pub instigator: *const UnknownType,
-    pub children: TArray<*const AActor<'a>, FDefaultAllocator>,
-    pub root_component: *const USceneComponent<'a>,
+    pub children: TArray<*const AActor, FDefaultAllocator>,
+    pub root_component: *const USceneComponent,
     pub controlling_matinee_actors: TArray<UnknownType, FDefaultAllocator>,
     pub timer_handle_lifespan_expired: u64,
     pub layers: TArray<FName, FDefaultAllocator>,
@@ -61,11 +61,7 @@ pub struct AActor<'a> {
     pub instance_components: TArray<UnknownType, FDefaultAllocator>,
     pub blueprint_created_components: TArray<UnknownType, FDefaultAllocator>,
     _detach_fence: [u8; 0x10],
-    _phantom: PhantomData<&'a u8>
+    _phantom: PhantomData<u8>
 }
 
-impl<'a> AActor<'a> {
-    pub fn object(&self) -> UObject { self.base_object }
-    pub fn name(&self) -> FName { self.object().name() }
-    pub fn full_name(&self) -> String { self.object().full_name() }
-}
+impl AActor {}

@@ -3,6 +3,12 @@
 mod game_base;
 pub use game_base::*;
 
+pub mod functionality;
+pub use functionality::*;
+
+pub mod behavior;
+pub use behavior::*;
+
 static mut GAME_BASE: GameBase = GameBase::empty("static_init");
 
 #[cfg(feature = "server-sdk")]

@@ -29,9 +29,6 @@ pub struct UClass {
 
 impl UClass {
     pub fn base_struct(&self) -> &UStruct { &self.base_struct }
-    pub fn object(&self) -> UObject { self.base_struct().field().object() }
-    pub fn name(&self) -> FName { self.base_struct().field().object().name() }
-    pub fn full_name(&self) -> String { self.base_struct().field().object().full_name() }
 
     pub fn unique(&self) -> u32 {
         self.class_unique_and_cooked >> 1

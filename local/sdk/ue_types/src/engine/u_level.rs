@@ -4,14 +4,14 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
-pub struct ULevel<'a> {
+pub struct ULevel {
     // 0x2B0
     pub base_object: UObject,
     pub base_asset_user_data: IInterfaceAssetUserData,
     pub url: FUrl,
-    pub actors: TArray<&'a AActor<'a>, FDefaultAllocator>,
-    pub actors_for_gc: TArray<&'a AActor<'a>, FDefaultAllocator>,
-    pub owning_world: *const UWorld<'a>,
+    pub actors: TArray<*const AActor, FDefaultAllocator>,
+    pub actors_for_gc: TArray<*const AActor, FDefaultAllocator>,
+    pub owning_world: *const UWorld,
     pub model: *const UnknownType,
     pub model_components: TArray<UnknownType, FDefaultAllocator>,
     pub actor_cluster: *const UnknownType,
@@ -67,15 +67,12 @@ pub struct ULevel<'a> {
     pub asset_user_data: TArray<UnknownType, FDefaultAllocator>,
     pub pending_auto_receive_input_actors: TArray<UnknownType, FDefaultAllocator>,
     pub destroyed_replicated_static_actors: TArray<UnknownType, FDefaultAllocator>,
-    _phantom: PhantomData<&'a u8>
+    _phantom: PhantomData<u8>
 }
 
-impl<'a> ULevel<'a> {
-    pub fn object(&self) -> UObject { self.base_object }
-    pub fn actors(&self) -> TArray<&'a AActor<'a>, FDefaultAllocator> { self.actors }
-    pub fn name(&self) -> FName { self.object().name() }
-    pub fn full_name(&self) -> String { self.object().full_name() }
-    pub fn owning_world(&self) -> &UWorld { unsafe { self.owning_world.as_ref::<'a>().unwrap() } }
+impl ULevel {
+    pub fn actors(&self) -> TArray<*const AActor, FDefaultAllocator> { self.actors }
+    pub fn owning_world(&self) -> &UWorld { unsafe { self.owning_world.as_ref().unwrap() } }
 }
 
 #[derive(Debug, Clone)]

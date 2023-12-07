@@ -17,8 +17,4 @@ pub struct UProperty {
     pub post_construct_link_next: *const UProperty
 }
 
-impl UProperty {
-    pub fn base_field(&self) -> UField { self.base_field }
-    pub fn name(&self) -> FName { self.base_field.name() }
-    pub fn full_name(&self) -> String { self.base_field.full_name() }
-}
+impl UProperty {}

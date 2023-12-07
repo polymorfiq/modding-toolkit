@@ -2,6 +2,7 @@
 use std::ffi::c_void;
 
 use game_base::GameBase;
+use game_base::{UObjectLike};
 use ue_types::*;
 use utils::{debug, logln};
 

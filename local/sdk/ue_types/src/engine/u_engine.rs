@@ -4,8 +4,8 @@ use crate::*;
 #[repr(C)]
 pub struct UEngine {
     // Size: 0xEC8
-    base_object: UObject,
+    pub base_object: UObject,
     _unknown_a: [u8; 0xCF0],
-    pub world_list: TIndirectArray<FWorldContext<'static>, FDefaultAllocator>,
+    pub world_list: TIndirectArray<FWorldContext, FDefaultAllocator>,
     _unknown_b: [u8; 0x198]
 }

@@ -7,9 +7,3 @@ pub struct UField {
     pub base_object: UObject,
     pub next: *const UField
 }
-
-impl UField {
-    pub fn object(&self) -> UObject { self.base_object }
-    pub fn name(&self) -> FName { self.object().name() }
-    pub fn full_name(&self) -> String { self.object().full_name() }
-}

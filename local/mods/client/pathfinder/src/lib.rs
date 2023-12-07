@@ -2,8 +2,9 @@
 use std::ffi::c_void;
 
 use game_base::GameBase;
+use game_base::{HasPawn, NavAgentLocatable};
 use ue_types::*;
-use utils::logln;
+use utils::{debug, logln};
 
 static MOD_NAME: &'static str = "pathfinder";
 
@@ -24,29 +25,25 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
         ("getplayerpos", _) => {
             let game_instance = GameBase::singleton().game_instance();
             if game_instance.is_none() {
-                logln!("GameInstance not found?!");
+                debug!("GameInstance not found?!");
                 return Ok(false)
             };
             let game_instance = game_instance.unwrap();
 
             let local_player = game_instance.local_players.at_index(0);
             if !local_player.is_ok() {
-                logln!("Local Player not found?!");
+                debug!("Local Player not found?!");
                 return Ok(false)
             };
-            let local_player = unsafe { (*local_player.unwrap()).as_ref::<'static>() };
-            if local_player.is_none() {
-                logln!("Local Player could not be dereferenced?!");
-                return Ok(false)
-            }
-            let local_player = local_player.unwrap();
+            let local_player_addr: *const ULocalPlayer = *local_player.unwrap();
+            let local_player = unsafe { local_player_addr.as_ref::<'static>().unwrap() };
 
-            let pawn = local_player.base_player.player_controller.base_controller.pawn;
+            let pawn = local_player.pawn();
             if pawn.is_none() {
-                logln!("Could not find pawn?!");
+                debug!("Pawn not found?!");
                 return Ok(false)
             }
-
+            debug!("Pawn Nav Agent: {:?}", pawn.unwrap().base_nav_agent);
 
             logln!("Player Position: {:?}", pawn.unwrap().get_nav_agent_location());
 
