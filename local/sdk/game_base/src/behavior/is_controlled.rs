@@ -2,25 +2,25 @@ use crate::*;
 use ue_types::*;
 
 pub trait IsControlled {
-    fn controller(&self) -> Option<&AController>;
+    fn controller(self) -> Option<*const AController>;
 }
 
-impl<'a> IsControlled for APawn {
-    fn controller(&self) -> Option<&AController> { unsafe { self.controller.as_ref() } }
+impl IsControlled for *const AController {
+    fn controller(self) -> Option<*const AController> { Some(self) }
 }
 
-impl IsControlled for ULocalPlayer {
-    fn controller(&self) -> Option<&AController> { self.player()?.controller() }
+impl IsControlled for *const APlayerController {
+    fn controller(self) -> Option<*const AController> { unsafe { Some(std::ptr::addr_of!((*self).base_controller)) } }
 }
 
-impl IsControlled for UPlayer {
-    fn controller(&self) -> Option<&AController> { self.player_controller()?.controller() }
+impl<'a> IsControlled for *const APawn {
+    fn controller(self) -> Option<*const AController> { unsafe { Some((*self).controller) } }
 }
 
-impl IsControlled for AController {
-    fn controller(&self) -> Option<&AController> { Some(self) }
+impl IsControlled for *const ULocalPlayer {
+    fn controller(self) -> Option<*const AController> { self.player()?.controller() }
 }
 
-impl IsControlled for APlayerController {
-    fn controller(&self) -> Option<&AController> { Some(&self.base_controller) }
+impl IsControlled for *const UPlayer {
+    fn controller(self) -> Option<*const AController> { self.player_controller()?.controller() }
 }

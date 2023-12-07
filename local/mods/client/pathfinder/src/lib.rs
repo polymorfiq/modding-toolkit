@@ -35,15 +35,13 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
                 debug!("Local Player not found?!");
                 return Ok(false)
             };
-            let local_player_addr: *const ULocalPlayer = *local_player.unwrap();
-            let local_player = unsafe { local_player_addr.as_ref::<'static>().unwrap() };
+            let local_player: *const ULocalPlayer = *local_player.unwrap();
 
             let pawn = local_player.pawn();
             if pawn.is_none() {
                 debug!("Pawn not found?!");
                 return Ok(false)
             }
-            debug!("Pawn Nav Agent: {:?}", pawn.unwrap().base_nav_agent);
 
             logln!("Player Position: {:?}", pawn.unwrap().get_nav_agent_location());
 
