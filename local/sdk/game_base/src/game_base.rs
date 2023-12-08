@@ -3,10 +3,10 @@ use ue_types::*;
 
 use crate::{
     GAME_BASE,
-    OFFSET_FUNC_GET_DISPLAY_NAME,
-    OFFSET_FUNC_GETNAMES,
-    OFFSET_STRUCT_GOBJECTS,
-    OFFSET_STRUCT_UWORLD_PROXY
+    offsets::OFFSET_FUNC_GET_DISPLAY_NAME,
+    offsets::OFFSET_FUNC_GETNAMES,
+    offsets::OFFSET_STRUCT_GOBJECTS,
+    offsets::OFFSET_STRUCT_UWORLD_PROXY
 };
 
 #[derive(Debug, Copy, Clone)]

@@ -1,15 +1,7 @@
 use ue_types::*;
+use crate::offsets;
 
-#[cfg(feature = "client-sdk")]
-const OFFSET_APAWN_VFTABLE: isize = 0x5a3f380;
-
-// #[cfg(feature = "client-sdk")]
-// const OFFSET_ACHARACTER_VFTABLE: isize = 0x5955a38;
-
-// #[cfg(feature = "client-sdk")]
-// const OFFSET_ACONTROLLER_VFTABLE: isize = 0x599c138;
-
-pub trait NavAgent<T> {
+pub trait VirtualINavAgent<T> {
     fn vftable(&self) -> *const NavAgentVFTable<T>;
 
     fn get_nav_agent_location(&self, this: *const INavAgentInterface<T>, result: *mut FVector) -> *const FVector {
@@ -21,14 +13,14 @@ pub trait NavAgent<T> {
     }
 }
 
-impl NavAgent<APawn> for INavAgentInterface<APawn> {
+impl VirtualINavAgent<APawn> for INavAgentInterface<APawn> {
     fn vftable(&self) -> *const NavAgentVFTable<APawn> {
-        crate::GameBase::singleton().at_offset(OFFSET_APAWN_VFTABLE) as *const NavAgentVFTable<APawn>
+        crate::GameBase::singleton().at_offset(offsets::OFFSET_VF_APAWN_INAVAGENT) as *const NavAgentVFTable<APawn>
     }
 }
 
 pub trait NavAgentLocatable<T: std::fmt::Debug + 'static> {
-    fn nav_agent(&self) -> Option<&'static dyn NavAgent<T>>;
+    fn nav_agent(&self) -> Option<&'static dyn VirtualINavAgent<T>>;
     fn nav_agent_owner(&self) -> Option<*const INavAgentInterface<T>>;
 
     fn get_nav_agent_location(&self) -> Option<FVector> {
@@ -44,6 +36,6 @@ pub trait NavAgentLocatable<T: std::fmt::Debug + 'static> {
 }
 
 impl NavAgentLocatable<APawn> for *const APawn {
-    fn nav_agent(&self) -> Option<&'static dyn NavAgent<APawn>> { unsafe { Some(&(**self).base_nav_agent as &'static dyn NavAgent<APawn>) } }
+    fn nav_agent(&self) -> Option<&'static dyn VirtualINavAgent<APawn>> { unsafe { Some(&(**self).base_nav_agent as &'static dyn VirtualINavAgent<APawn>) } }
     fn nav_agent_owner(&self) -> Option<*const INavAgentInterface<APawn>> { unsafe { Some(self.byte_offset(std::mem::size_of::<AActor>() as isize) as *const INavAgentInterface<APawn>) } }
 }
