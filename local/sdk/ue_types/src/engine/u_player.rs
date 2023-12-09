@@ -4,7 +4,7 @@ use crate::*;
 #[repr(C)]
 pub struct UPlayer {
     // Size: 0x0048
-    pub base_object: UObject,
+    pub base_object: UObject<UnknownType>,
     pub base_f_exec: FExec,
     pub player_controller: *const APlayerController,
     pub current_net_speed: u32,

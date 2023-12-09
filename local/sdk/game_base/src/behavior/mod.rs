@@ -12,6 +12,3 @@ pub use is_player_controlled::*;
 
 mod u_field_like;
 pub use u_field_like::*;
-
-mod u_object_like;
-pub use u_object_like::*;

@@ -4,7 +4,7 @@ use crate::*;
 #[repr(C, align(0x8))]
 pub struct UActorComponent {
     // Size: 0x100
-    pub base_object: UObject,
+    pub base_object: UObject<UnknownType>,
     pub base_asset_data: IInterfaceAssetUserData,
     pub primary_component_tick: FActorTickFunction,
     pub component_tags: TArray<FName, FDefaultAllocator>,

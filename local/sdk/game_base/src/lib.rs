@@ -12,6 +12,9 @@ pub use behavior::*;
 pub mod offsets_client;
 pub mod offsets_server;
 
+pub mod funcs;
+pub use funcs::*;
+
 #[cfg(feature = "server-sdk")]
 mod offsets { pub use crate::offsets_server::*; }
 

@@ -2,7 +2,7 @@
 use std::ffi::c_void;
 
 use game_base::GameBase;
-use game_base::{UObjectLike};
+use game_base::{VirtualUObject};
 use ue_types::*;
 use utils::{debug, logln};
 
@@ -13,7 +13,10 @@ fn mod_main(base_addr: *const c_void) {
     let game_base = GameBase::initialize(MOD_NAME, base_addr);
     
     // Logs debug message to in-game console
-    utils::log::set_console(game_base.console());
+    utils::log::set_print_to_console(Box::new(|msg| {
+        let console = game_base.console();
+        if console.is_some() { unsafe { (*(*console.unwrap().virtual_funcs()).output_text())(console.unwrap(), msg) } };
+    }));
 
     injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
 }
@@ -55,12 +58,10 @@ fn find_with_vf_table(table_addr: *const *const UnknownType) {
     for i in 0..(g_objects.num_elements.to_native()-1) {
         match g_objects.item_at_idx(i as usize) {
             Some(item) => {
-                match item.object::<UObject>() {
+                match unsafe { (*item).object::<UObject<UnknownType>>() } {
                     Some(obj) => {
-                        if obj.virtual_funcs() == table_addr {
-                            count += 1;
-                            logln!("GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().full_name());
-                        }
+                        count += 1;
+                        logln!("GOBJECTS[{:?}]: {:?}", i, obj.full_name());
                     }
                     _ => ()
                 }
@@ -83,14 +84,13 @@ fn find_objects_with_class(args: &str) {
         let item = g_objects.item_at_idx(i as usize);
         if !item.is_some() { continue };
 
-        let obj = item.unwrap().object::<UObject>();
+        let obj = unsafe { (*item.unwrap()).object::<UObject<UnknownType>>() };
         if !obj.is_some() { continue };
 
         let obj = obj.unwrap();
-        let class_name = obj.class().full_name();
         
-        if obj.full_name().contains(args) || class_name.contains(args) {
-            logln!("GOBJECTS[{:?}]: {:?} - {:?} - ({:?})", i, obj.class().full_name(), obj.virtual_funcs(), obj.full_name());
+        if obj.full_name().contains(args) {
+            logln!("GOBJECTS[{:?}]: ({:?})", i, obj.full_name());
             count += 1;
         }
     }

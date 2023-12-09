@@ -1,6 +1,6 @@
 use retour::static_detour;
 use ue_types::{FString, UConsole};
-use game_base::GameBase;
+use game_base::{GameBase, VirtualUObject};
 use utils::{debug, warning};
 
 static_detour! {
@@ -15,7 +15,8 @@ pub fn add_command_intercept(shiv_fn: CommandInterceptShiv) -> Result<(), Box<dy
         Some(console) => {
             unsafe {
                 CMD_INTERCEPT_SHIV = Some(shiv_fn);
-                CommandIntercept.initialize(console._console_command(), command_intercept_shiv)?;
+                
+                CommandIntercept.initialize(*(*console.virtual_funcs()).console_command(), command_intercept_shiv)?;
                 CommandIntercept.enable()?;
             }
 

@@ -1,5 +1,6 @@
 use std::ffi::c_void;
 use ue_types::*;
+use crate::virtual_funcs::VirtualUObject;
 
 use crate::{
     GAME_BASE,
@@ -47,6 +48,8 @@ impl GameBase {
         let addr_gnames = (get_names)();
         let addr_get_display_name = unsafe { base_addr.byte_offset(OFFSET_FUNC_GET_DISPLAY_NAME) };
 
+        println!("GAME ADDRESS BASE: {:p}", base_addr);
+
         let mut generated = Self {
             mod_name: mod_name,
             addr_base: Some(base_addr),
@@ -83,11 +86,11 @@ impl GameBase {
 
         for i in 0..(g_objects.num_elements.to_native()-1) {
             let item = g_objects.item_at_idx(i as usize);
-            let object = if item.is_some() { item.unwrap().object::<UObject>() } else { None };
+            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<UnknownType>>() } } else { None };
             let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
 
             if obj_name == Some("/Engine/Transient.GameEngine.GGameViewportClient.Console".to_string()) {
-                self.game_console = item.expect("Unable to unwrap Game Console Item").object::<UConsole>();
+                self.game_console = unsafe { (*item.expect("Unable to unwrap Game Console Item")).object::<UConsole>() };
             }
         }
 
@@ -105,8 +108,8 @@ impl GameBase {
         }
     }
 
-    pub fn gobjects(&self) -> FChunkedFixedUObjectArray {
-        let ptr = self.addr_gobjects.expect("GOBJECT address missing...") as *const FUObjectArray;
+    pub fn gobjects(&self) -> FChunkedFixedUObjectArray<UnknownType> {
+        let ptr = self.addr_gobjects.expect("GOBJECT address missing...") as *const FUObjectArray<UnknownType>;
         unsafe { (*ptr).objects_array }
     }
 

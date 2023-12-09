@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 #[repr(C)]
 pub struct AActor {
     // Size: 0x0348
-    pub base_object: UObject,
+    pub base_object: UObject<UnknownType>,
     pub primary_actor_tick: FActorTickFunction,
     b_something: u32,
     pub b_hidden: u8,

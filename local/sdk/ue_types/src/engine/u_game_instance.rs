@@ -3,12 +3,12 @@ use crate::*;
 #[derive(Debug, Clone)]
 #[repr(C)]
 pub struct UGameInstance {
-    pub base_object: UObject,
+    pub base_object: UObject<UnknownType>,
     pub base_exec: FExec,
     pub world_context: *const FWorldContext,
     pub local_players: TArray<*const ULocalPlayer, FDefaultAllocator>,
     pub online_session: *const UnknownType,
-    pub referenced_objects: TArray<*const UObject, FDefaultAllocator>,
+    pub referenced_objects: TArray<*const UObject<UnknownType>, FDefaultAllocator>,
     pub notify_pre_client_travel_delegates: TMulticastDelegate<UnknownType, UnknownType>,
     pub on_play_together_event_received_delegate_handle: FDelegateHandle,
     pub pie_map_name: FString,

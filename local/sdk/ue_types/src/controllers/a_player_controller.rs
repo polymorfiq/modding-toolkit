@@ -80,7 +80,7 @@ pub struct APlayerController {
     pub audio_listener_location_override: FVector,
     pub audio_listener_rotation_override: FRotator,
     pub audio_listener_attenuation_override: FVector,
-    pub spectator_pawn: Option<*const APawn>,
+    pub spectator_pawn: *const APawn,
     pub last_retry_player_time: u32le,
     pub b_is_local_player_controller: u8,
     _padding_k: [u8; 3],

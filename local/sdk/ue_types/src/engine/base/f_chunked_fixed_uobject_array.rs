@@ -5,18 +5,18 @@ const GOBJECTS_NUM_ELEMS_PER_CHUNK: usize = 64 * 1024;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C)]
-pub struct FChunkedFixedUObjectArray {
+pub struct FChunkedFixedUObjectArray<VFTable> {
     // Size: 0x20
-    pub objects: *const *const FUObjectItem,
-    pub pre_allocated_objects: *const FUObjectItem,
+    pub objects: *const *const FUObjectItem<VFTable>,
+    pub pre_allocated_objects: *const FUObjectItem<VFTable>,
     pub max_elements: u32le,
     pub num_elements: u32le,
     pub max_chunks: u32le,
     pub num_chunks: u32le,
 }
 
-impl FChunkedFixedUObjectArray {
-    pub fn item_at_idx(&self, idx: usize) -> Option<FUObjectItem> {
+impl<VFTable> FChunkedFixedUObjectArray<VFTable> {
+    pub fn item_at_idx(&self, idx: usize) -> Option<*const FUObjectItem<VFTable>> {
 		let chunk_idx = idx / GOBJECTS_NUM_ELEMS_PER_CHUNK;
         let elem_idx = idx % (GOBJECTS_NUM_ELEMS_PER_CHUNK - 1);
 
@@ -31,6 +31,6 @@ impl FChunkedFixedUObjectArray {
         let elem_ptr = unsafe { chunk.offset(elem_idx as isize) };
         if (elem_ptr as *const c_void) == std::ptr::null() { return None; }
 
-        unsafe { Some(*elem_ptr) }
+        Some(elem_ptr)
     }
 }
