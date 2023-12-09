@@ -1,8 +1,8 @@
 use crate::*;
 use std::marker::PhantomData;
 
-#[derive(Debug, Clone)]
-#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+#[repr(C, align(0x8))]
 pub struct AActor {
     // Size: 0x0348
     pub base_object: UObject<*const UnknownType>,
@@ -63,5 +63,3 @@ pub struct AActor {
     _detach_fence: [u8; 0x10],
     _phantom: PhantomData<u8>
 }
-
-impl AActor {}

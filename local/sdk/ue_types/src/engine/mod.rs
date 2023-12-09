@@ -4,6 +4,21 @@ pub use base::*;
 pub mod actors;
 pub use actors::*;
 
+pub mod a_game_mode;
+pub use a_game_mode::*;
+
+pub mod a_game_session;
+pub use a_game_session::*;
+
+pub mod a_game_state;
+pub use a_game_state::*;
+
+pub mod a_player_state;
+pub use a_player_state::*;
+
+pub mod a_server_stat_replicator;
+pub use a_server_stat_replicator::*;
+
 mod u_class;
 pub use u_class::*;
 

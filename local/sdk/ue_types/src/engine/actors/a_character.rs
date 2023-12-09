@@ -5,5 +5,3 @@ use crate::*;
 pub struct ACharacter {
     pub base_pawn: APawn
 }
-
-impl ACharacter {}

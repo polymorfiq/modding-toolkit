@@ -57,23 +57,18 @@ impl GameBase {
     }
 
     pub fn search_game_objects_attempt(&mut self) -> bool {
-        let g_objects = GObjects::objects::<UnknownType>();
         let console_regex = regex::Regex::new(r"/Engine/Transient.GameEngine_([0-9]+)\.GGameViewportClient_([0-9]+)\.Console_([0-9]+)").unwrap();
 
-        for i in 0..(g_objects.num_elements.to_native()-1) {
-            let item = g_objects.item_at_idx(i as usize);
-            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() } } else { None };
-            let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
+        let consoles = GObjects::filter(|object| {
+            console_regex.is_match(object.full_name().as_str())
+        });
 
-            if obj_name.is_some() && console_regex.is_match(obj_name.clone().unwrap().as_str()) {
-                let console = unsafe { (*item.expect("Unable to unwrap Game Console Item")).object_addr as *const UConsole };
-                println!("GAME CONSOLE: {:p}", console);
-
-                self.game_console = Some(Console::new(console));
-            }
+        if consoles.len() > 0 {
+            self.game_console = Some(Console::new(consoles[0] as *const UConsole));
+            true
+        } else {
+            false
         }
-
-        self.game_console.is_some()
     }
 
     pub fn singleton() -> &'static Self {

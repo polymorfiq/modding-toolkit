@@ -25,5 +25,3 @@ pub struct APawn {
     pub last_control_input_vector: FVector,
     _padding_d: [u8; 4]
 }
-
-impl APawn {}

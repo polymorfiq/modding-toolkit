@@ -15,4 +15,20 @@ impl GObjects {
             std::mem::transmute(std::ptr::addr_of!(Self::gobjects::<VFTable>().objects_array))
         }
     }
+
+    pub fn filter(test: impl Fn(&UObject<*const UnknownType>) -> bool) -> Vec<*const UObject<*const UnknownType>> {
+        let g_objects = Self::objects::<UnknownType>();
+        
+        let mut filtered: Vec<*const UObject<*const UnknownType>> = vec![];
+        for i in 0..(g_objects.num_elements.to_native()-1) {
+            let item = g_objects.item_at_idx(i as usize);
+            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() } } else { None };
+            
+            if object.is_some() && (test)(object.unwrap()) {
+                filtered.push(std::ptr::addr_of!(*object.unwrap()))
+            }
+        }
+
+        return filtered
+    }
 }

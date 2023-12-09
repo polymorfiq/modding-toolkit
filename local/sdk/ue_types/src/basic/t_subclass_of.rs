@@ -1,9 +1,14 @@
-use std::marker::PhantomData;
-
-#[derive(Debug, Copy, Clone)]
-#[repr(C)]
+#[derive(Debug)]
+#[repr(C, align(0x8))]
 pub struct TSubclassOf<T> {
     // 0x8
-    pub ptr: u64,
-    _phantom: PhantomData<T>
+    pub ptr: *const T
+}
+
+impl<T> Copy for TSubclassOf<T> { }
+
+impl<T> Clone for TSubclassOf<T> {
+    fn clone(&self) -> TSubclassOf<T> {
+        TSubclassOf::<T>{ptr: self.ptr}
+    }
 }

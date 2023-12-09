@@ -51,6 +51,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<FTickFunction>(), 0x8);
         assert_eq!(std::mem::align_of::<FActorTickFunction>(), 0x8);
         assert_eq!(std::mem::align_of::<AActor>(), 0x8);
+        assert_eq!(std::mem::align_of::<AInfo>(), 0x8);
         assert_eq!(std::mem::align_of::<UObject<*const UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<UField>(), 0x8);
         assert_eq!(std::mem::align_of::<TArray<UObject<*const UnknownType>, FDefaultAllocator>>(), 0x8);
@@ -58,6 +59,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FString>(), 0x8);
+        assert_eq!(std::mem::align_of::<FText>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
         assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
         assert_eq!(std::mem::align_of::<UWorld>(), 0x8);
@@ -69,6 +71,8 @@ mod tests {
         assert_eq!(std::mem::align_of::<AController>(), 0x8);
         assert_eq!(std::mem::align_of::<APlayerController>(), 0x8);
         assert_eq!(std::mem::align_of::<APawn>(), 0x8);
+        assert_eq!(std::mem::align_of::<AGameModeBase>(), 0x8);
+        assert_eq!(std::mem::align_of::<AGameMode>(), 0x8);
     }
     
     #[test]
@@ -107,6 +111,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<FTickFunction>(), 0x50);
         assert_eq!(std::mem::size_of::<FActorTickFunction>(), 0x58);
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
+        assert_eq!(std::mem::size_of::<AInfo>(), 0x348);
         assert_eq!(std::mem::size_of::<UObject<*const UnknownType>>(), 0x30);
         assert_eq!(std::mem::size_of::<UField>(), 0x38);
         assert_eq!(std::mem::size_of::<TArray<UObject<*const UnknownType>, FDefaultAllocator>>(), 0x10);
@@ -114,6 +119,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x38);
         assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
+        assert_eq!(std::mem::size_of::<FText>(), 0x18);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);
         assert_eq!(std::mem::size_of::<FWorldPSCPool>(), 0x58);
@@ -129,5 +135,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<*const UGameInstance>(), 0x8);
         assert_eq!(std::mem::size_of::<UGameEngine>(), 0xF18);
         assert_eq!(std::mem::size_of::<APlayerController>(), 0x698);
+        assert_eq!(std::mem::size_of::<AGameModeBase>(), 0x3E8);
+        assert_eq!(std::mem::size_of::<AGameMode>(), 0x438);
     }
 }

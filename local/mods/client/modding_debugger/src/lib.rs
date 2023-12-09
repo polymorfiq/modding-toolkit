@@ -24,6 +24,11 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
     let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
+        (_, Some(("start_game", _))) => {
+            MainMenu::game_mode();
+            false
+        },
+
         (_, Some(("withname", args))) => {
             find_objects_with_name(args);
             false

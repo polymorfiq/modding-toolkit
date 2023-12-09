@@ -46,8 +46,14 @@ pub use f_subsystem_collection_base::*;
 mod f_subsystem_collection;
 pub use f_subsystem_collection::*;
 
+mod f_text;
+pub use f_text::*;
+
 mod f_tick_function;
 pub use f_tick_function::*;
+
+mod f_unique_net_id_repl;
+pub use f_unique_net_id_repl::*;
 
 mod f_uobject_array;
 pub use f_uobject_array::*;

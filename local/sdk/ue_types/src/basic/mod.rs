@@ -100,6 +100,9 @@ pub use t_ref_count_ptr::*;
 mod t_shared_ptr;
 pub use t_shared_ptr::*;
 
+mod t_shared_ref;
+pub use t_shared_ref::*;
+
 mod t_sparse_array;
 pub use t_sparse_array::*;
 
