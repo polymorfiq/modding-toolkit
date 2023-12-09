@@ -1,6 +1,6 @@
 use std::ffi::c_void;
 use ue_types::*;
-use crate::virtual_funcs::VirtualUObject;
+use crate::{Console, VirtualObject};
 
 use crate::{
     GAME_BASE,
@@ -17,7 +17,7 @@ pub struct GameBase {
     addr_gobjects: Option<*const c_void>,
     addr_gnames: Option<*const c_void>,
     addr_get_display_name: Option<*const c_void>,
-    pub game_console: Option<&'static UConsole>
+    pub game_console: Option<Console>
 }
 
 impl Default for GameBase {
@@ -86,11 +86,11 @@ impl GameBase {
 
         for i in 0..(g_objects.num_elements.to_native()-1) {
             let item = g_objects.item_at_idx(i as usize);
-            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<UnknownType>>() } } else { None };
+            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() } } else { None };
             let obj_name = if object.is_some() { Some(object.unwrap().full_name()) } else { None };
 
             if obj_name == Some("/Engine/Transient.GameEngine.GGameViewportClient.Console".to_string()) {
-                self.game_console = unsafe { (*item.expect("Unable to unwrap Game Console Item")).object::<UConsole>() };
+                self.game_console = unsafe { Some(Console::new((*item.expect("Unable to unwrap Game Console Item")).object_addr as *const UConsole)) };
             }
         }
 
@@ -144,7 +144,7 @@ impl GameBase {
         unsafe { uworld_proxy.world.unwrap().as_ref::<'static>() }
     }
 
-    pub fn console(&self) -> Option<&'static UConsole> { self.game_console }
+    pub fn console(&self) -> Option<Console> { self.game_console }
 
     pub fn get_display_name_fn(&self) -> Option<fn(*const FName) -> *const FNameEntryHeader> {
         match self.addr_get_display_name {

@@ -16,7 +16,7 @@ pub struct UStruct {
     pub ref_link: *const UProperty,
     pub destructor_link: *const UProperty,
     pub post_construct_link: *const UProperty,
-    pub script_object_references: TArray<*const UObject<UnknownType>, FDefaultAllocator>,
+    pub script_object_references: TArray<*const UObject<*const UnknownType>, FDefaultAllocator>,
 }
 
 impl UStruct {

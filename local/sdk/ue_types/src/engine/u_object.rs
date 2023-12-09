@@ -24,11 +24,11 @@ pub struct UObject<VFTable> {
 #[repr(C, align(0x8))]
 pub struct UObjectBase<VFTable> {
     // Size: 0x30
-    pub vf_table: *const VFTable,
+    pub vftable: VFTable,
     pub obj_flags: u32,
     pub internal_idx: u32le,
     pub class_private: *const UClass,
     pub name_private: FName,
     _padding: [u8; 4],
-    pub outer_private: *const UObject<UnknownType>
+    pub outer_private: *const UObject<*const UnknownType>
 }

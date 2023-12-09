@@ -3,8 +3,11 @@
 mod game_base;
 pub use game_base::*;
 
-pub mod virtual_funcs;
-pub use virtual_funcs::*;
+pub mod in_game;
+pub use in_game::*;
+
+pub mod interface;
+pub use interface::*;
 
 pub mod behavior;
 pub use behavior::*;

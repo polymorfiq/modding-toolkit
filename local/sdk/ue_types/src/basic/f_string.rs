@@ -34,6 +34,12 @@ impl std::string::ToString for FString {
     }
 }
 
+impl From<String> for FString {
+    fn from(str_data: String) -> FString {
+        WideString::from_str(str_data.as_str()).into()
+    }
+}
+
 impl From<&str> for FString {
     fn from(str_data: &str) -> FString {
         WideString::from_str(str_data).into()

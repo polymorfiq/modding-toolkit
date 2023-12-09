@@ -4,7 +4,7 @@ use simple_endian::u32le;
 #[derive(Debug, Clone)]
 #[repr(C, align(0x8))]
 pub struct UWorld {
-    pub base_object: UObject<UnknownType>,
+    pub base_object: UObject<*const UnknownType>,
     pub base_network_notify: FNetworkNotify,
     pub persistent_level: *const ULevel,
     pub net_driver: *const UnknownType,
@@ -13,8 +13,8 @@ pub struct UWorld {
     pub line_batch_comp_foreground: *const UnknownType,
     pub network_manager: *const UnknownType,
     pub physical_collision_handler: *const UnknownType,
-    pub extra_referenced_objs: TArray<*const UObject<UnknownType>, FDefaultAllocator>,
-    pub per_module_data_objs: TArray<*const UObject<UnknownType>, FDefaultAllocator>,
+    pub extra_referenced_objs: TArray<*const UObject<*const UnknownType>, FDefaultAllocator>,
+    pub per_module_data_objs: TArray<*const UObject<*const UnknownType>, FDefaultAllocator>,
     pub streaming_levels: TArray<*const UnknownType, FDefaultAllocator>,
     pub streaming_levels_to_consider: [u8; 0x28],
     pub streaming_levels_prefix: FString,

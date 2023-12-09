@@ -53,9 +53,9 @@ mod tests {
         assert_eq!(std::mem::align_of::<FTickFunction>(), 0x8);
         assert_eq!(std::mem::align_of::<FActorTickFunction>(), 0x8);
         assert_eq!(std::mem::align_of::<AActor>(), 0x8);
-        assert_eq!(std::mem::align_of::<UObject<UnknownType>>(), 0x8);
+        assert_eq!(std::mem::align_of::<UObject<*const UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<UField>(), 0x8);
-        assert_eq!(std::mem::align_of::<TArray<UObject<UnknownType>, FDefaultAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<TArray<UObject<*const UnknownType>, FDefaultAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TSparseArrayBaseIterator<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x8);
@@ -109,9 +109,9 @@ mod tests {
         assert_eq!(std::mem::size_of::<FTickFunction>(), 0x50);
         assert_eq!(std::mem::size_of::<FActorTickFunction>(), 0x58);
         assert_eq!(std::mem::size_of::<AActor>(), 0x348);
-        assert_eq!(std::mem::size_of::<UObject<UnknownType>>(), 0x30);
+        assert_eq!(std::mem::size_of::<UObject<*const UnknownType>>(), 0x30);
         assert_eq!(std::mem::size_of::<UField>(), 0x38);
-        assert_eq!(std::mem::size_of::<TArray<UObject<UnknownType>, FDefaultAllocator>>(), 0x10);
+        assert_eq!(std::mem::size_of::<TArray<UObject<*const UnknownType>, FDefaultAllocator>>(), 0x10);
         assert_eq!(std::mem::size_of::<TSparseArrayBaseIterator<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x28);
         assert_eq!(std::mem::size_of::<TSparseArray<UnknownType, TAlignedBytes1<0>, FDefaultAllocator, FDefaultBitArrayAllocator>>(), 0x38);
         assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);

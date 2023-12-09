@@ -2,7 +2,7 @@
 use std::ffi::c_void;
 
 use game_base::GameBase;
-use game_base::{HasPawn, NavAgentLocatable, VirtualUObject};
+use game_base::{HasPawn, VirtualNavAgent};
 use ue_types::*;
 use utils::{debug, logln};
 
@@ -15,7 +15,7 @@ fn mod_main(base_addr: *const c_void) {
     // Logs debug message to in-game console
     utils::log::set_print_to_console(Box::new(|msg| {
         let console = game_base.console();
-        if console.is_some() { unsafe { (*(*console.unwrap().virtual_funcs()).output_text())(console.unwrap(), msg) } };
+        if console.is_some() { console.unwrap().output_text(msg) };
     }));
 
     injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
@@ -46,7 +46,7 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
                 return Ok(false)
             }
 
-            logln!("Player Position: {:?}", pawn.unwrap().get_nav_agent_location());
+            logln!("Player Position: {:?}", unsafe { (*pawn.unwrap()).get_world_location() });
 
             false
         }

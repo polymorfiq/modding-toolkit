@@ -6,7 +6,7 @@ use crate::*;
 #[repr(C)]
 pub struct ULevel {
     // 0x2B0
-    pub base_object: UObject<UnknownType>,
+    pub base_object: UObject<*const UnknownType>,
     pub base_asset_user_data: IInterfaceAssetUserData,
     pub url: FUrl,
     pub actors: TArray<*const AActor, FDefaultAllocator>,

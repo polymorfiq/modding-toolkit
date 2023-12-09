@@ -2,7 +2,7 @@
 use std::ffi::c_void;
 
 use game_base::GameBase;
-use game_base::{VirtualUObject};
+use game_base::VirtualObject;
 use ue_types::*;
 use utils::{debug, logln};
 
@@ -15,7 +15,7 @@ fn mod_main(base_addr: *const c_void) {
     // Logs debug message to in-game console
     utils::log::set_print_to_console(Box::new(|msg| {
         let console = game_base.console();
-        if console.is_some() { unsafe { (*(*console.unwrap().virtual_funcs()).output_text())(console.unwrap(), msg) } };
+        if console.is_some() { console.unwrap().output_text(msg) };
     }));
 
     injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
@@ -58,7 +58,7 @@ fn find_with_vf_table(table_addr: *const *const UnknownType) {
     for i in 0..(g_objects.num_elements.to_native()-1) {
         match g_objects.item_at_idx(i as usize) {
             Some(item) => {
-                match unsafe { (*item).object::<UObject<UnknownType>>() } {
+                match unsafe { (*item).object::<UObject<*const UnknownType>>() } {
                     Some(obj) => {
                         count += 1;
                         logln!("GOBJECTS[{:?}]: {:?}", i, obj.full_name());
@@ -84,7 +84,7 @@ fn find_objects_with_class(args: &str) {
         let item = g_objects.item_at_idx(i as usize);
         if !item.is_some() { continue };
 
-        let obj = unsafe { (*item.unwrap()).object::<UObject<UnknownType>>() };
+        let obj = unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() };
         if !obj.is_some() { continue };
 
         let obj = obj.unwrap();
