@@ -1,7 +1,7 @@
 #![feature(pointer_byte_offsets)]
 use std::ffi::c_void;
 
-use game_base::GameBase;
+use game_base::{GameBase, GameInstance};
 use game_base::{HasPawn, VirtualNavAgent};
 use ue_types::*;
 use utils::{debug, logln};
@@ -26,13 +26,7 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
         ("getplayerpos", _) => {
-            let game_instance = GameBase::singleton().game_instance();
-            if game_instance.is_none() {
-                debug!("GameInstance not found?!");
-                return Ok(false)
-            };
-            let game_instance = game_instance.unwrap();
-
+            let game_instance = GameInstance::instance();
             let local_player = game_instance.local_players.at_index(0);
             if !local_player.is_ok() {
                 debug!("Local Player not found?!");

@@ -4,8 +4,6 @@ use core::ffi::c_void;
 pub mod basic;
 pub use basic::*;
 
-pub mod funcs;
-
 pub mod engine;
 pub use engine::*;
 

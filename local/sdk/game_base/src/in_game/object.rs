@@ -1,3 +1,4 @@
+use crate::VirtualGameName;
 use ue_types::*;
 
 #[derive(Debug, Copy, Clone)]
@@ -18,10 +19,10 @@ pub trait VirtualObject<VFTable: Copy + std::fmt::Debug> {
     
     fn name(&self) -> FName { unsafe { (*self.object().0).base.name_private } }
 
-    fn class(&self) -> Option<*const UClass> {
+    fn class(&self) -> Option<&UClass> {
         let base = unsafe { &(*self.object().0).base };
         if base.class_private != std::ptr::null() {
-            Some(base.class_private)
+            unsafe { Some(base.class_private.as_ref().unwrap()) }
         } else {
             None
         }
@@ -40,6 +41,20 @@ pub trait VirtualObject<VFTable: Copy + std::fmt::Debug> {
         let base = unsafe { &(*self.object().0).base };
         let my_name = base.name_private;
         let name_str = my_name.to_string();
+
+        match self.outer() {
+            Some(outer) => [outer.full_name(), name_str].join("."),
+            None => name_str
+        }
+    }
+
+    fn full_display_name(&self) -> String {
+        let base = unsafe { &(*self.object().0).base };
+        let my_name = base.name_private;
+        let name_str = match my_name.display_name().string_value() {
+            Some(str_val) => str_val,
+            None => "?".to_string()
+        };
 
         match self.outer() {
             Some(outer) => [outer.full_name(), name_str].join("."),

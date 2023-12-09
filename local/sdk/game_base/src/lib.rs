@@ -18,6 +18,12 @@ pub mod offsets_server;
 pub mod funcs;
 pub use funcs::*;
 
+pub mod data;
+pub use data::*;
+
+pub mod statics;
+pub use statics::*;
+
 #[cfg(feature = "server-sdk")]
 mod offsets { pub use crate::offsets_server::*; }
 

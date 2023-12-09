@@ -1,10 +1,9 @@
 #![feature(pointer_byte_offsets)]
 use std::ffi::c_void;
 
-use game_base::GameBase;
-use game_base::VirtualObject;
+use game_base::*;
 use ue_types::*;
-use utils::{debug, logln};
+use utils::logln;
 
 static MOD_NAME: &'static str = "modding_debugger";
 
@@ -25,8 +24,8 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
     let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
-        (_, Some(("world", args))) => {
-            find_actors(args);
+        (_, Some(("withname", args))) => {
+            find_objects_with_name(args);
             false
         },
 
@@ -50,7 +49,7 @@ fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool,
 }
 
 fn find_with_vf_table(table_addr: *const *const UnknownType) {
-    let g_objects = GameBase::singleton().gobjects();
+    let g_objects = GObjects::objects::<UnknownType>();
 
     logln!("Finding objects with VFTable: {:p}", table_addr);
     let mut count: usize = 0;
@@ -76,7 +75,37 @@ fn find_with_vf_table(table_addr: *const *const UnknownType) {
 }
 
 fn find_objects_with_class(args: &str) {
-    let g_objects = GameBase::singleton().gobjects();
+    let g_objects = GObjects::objects::<UnknownType>();
+
+    let mut count: usize = 0;
+    logln!("Finding objects with Class Name: {:?}", args);
+    for i in 0..(g_objects.num_elements.to_native()-1) {
+        let item = g_objects.item_at_idx(i as usize);
+        if !item.is_some() { continue };
+
+        let obj = unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() };
+        if !obj.is_some() { continue };
+
+        let obj = obj.unwrap();
+
+        match obj.class() {
+            Some(class) => {
+                if class.full_name().contains(args) {
+                    logln!("GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), obj.class().unwrap().full_name());
+                    count += 1;
+                }
+            }
+
+            None => ()
+        }
+        
+        
+    }
+    if count == 0 { logln!("No results found for Class Name: {:?}", args); }
+}
+
+fn find_objects_with_name(args: &str) {
+    let g_objects = GObjects::objects::<UnknownType>();
 
     let mut count: usize = 0;
     logln!("Finding objects with Class Name: {:?}", args);
@@ -90,22 +119,14 @@ fn find_objects_with_class(args: &str) {
         let obj = obj.unwrap();
         
         if obj.full_name().contains(args) {
-            logln!("GOBJECTS[{:?}]: ({:?})", i, obj.full_name());
+            let class_name = match obj.class() {
+                Some(class) => class.full_name(),
+                None => "?".to_string()
+            };
+
+            logln!("GOBJECTS[{:?}]: {:?} ({:?})", i, obj.full_name(), class_name);
             count += 1;
         }
     }
-    if count == 0 { logln!("No results found for Class Name: {:?}", args); }
-}
-
-fn find_actors(_args: &str) {
-    let world = GameBase::singleton().world();
-    if world.is_none() {
-        debug!("NO WORLD FOUND?!");
-        return
-    }
-    let world = world.unwrap();
-
-    debug!("WORLD: {:#01x?}", world);
-    debug!("LEVEL: {:#01x?}", world.level());
-    debug!("GAME INSTANCE: {:#01x?}", GameBase::singleton().game_instance());
+    if count == 0 { logln!("No results found for Object Name: {:?}", args); }
 }
