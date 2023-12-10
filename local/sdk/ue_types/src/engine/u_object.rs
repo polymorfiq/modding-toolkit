@@ -25,7 +25,7 @@ pub struct UObject<VFTable> {
 pub struct UObjectBase<VFTable> {
     // Size: 0x30
     pub vftable: VFTable,
-    pub obj_flags: u32,
+    pub object_flags: u32,
     pub internal_idx: u32le,
     pub class_private: *const UClass,
     pub name_private: FName,

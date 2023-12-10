@@ -16,3 +16,6 @@ pub const OFFSET_VF_ACHARACTER_INAVAGENT: isize = 0x5955a38;
 
 // AController
 pub const OFFSET_VF_ACONTROLLER_INAVAGENT: isize = 0x599c138;
+
+// Main Menu
+pub const OFFSET_FUNC_MAIN_MENU_CONNECT_TO_SERVER: isize = 0xDB80F0;
