@@ -9,8 +9,9 @@ impl Console {
         Self(console)
     }
 
-    pub fn console_command(&self, cmd: String) {
-        let cmd_fstr: Box<FString> = Box::new(cmd.into());
+    pub fn console_command(&self, cmd: &str) {
+        let cmd_str = cmd.to_string();
+        let cmd_fstr: Box<FString> = Box::new(format!("{}\0", cmd_str).into());
         unsafe { (*self.object_virtual_funcs().console_command())(self.0, Box::into_raw(cmd_fstr)); }
     }
 

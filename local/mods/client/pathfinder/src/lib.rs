@@ -1,8 +1,7 @@
 #![feature(pointer_byte_offsets)]
 use std::ffi::c_void;
 
-use game_base::{GameBase, GameInstance};
-use game_base::{HasPawn, VirtualNavAgent};
+use game_base::*;
 use ue_types::*;
 use utils::{debug, logln};
 
@@ -21,7 +20,7 @@ fn mod_main(base_addr: *const c_void) {
     injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
 }
 
-fn intercept_console_command(_console: &UConsole, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {
+fn intercept_console_command(_console: Console, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {
     let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
