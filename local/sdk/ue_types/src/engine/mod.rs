@@ -19,6 +19,9 @@ pub use a_player_state::*;
 pub mod a_server_stat_replicator;
 pub use a_server_stat_replicator::*;
 
+pub mod f_asset_data;
+pub use f_asset_data::*;
+
 mod u_class;
 pub use u_class::*;
 

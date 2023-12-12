@@ -27,18 +27,14 @@ impl GameBase {
     pub fn initialize(
         mod_name: &'static str,
         base_addr: *const c_void
-    ) -> &'static Self {
+    ) -> &'static mut Self {
         unsafe {
             GAME_BASE.mod_name = mod_name;
             GAME_BASE.addr_base = Some(base_addr);
         };
 
         println!("GAME ADDRESS BASE: {:p}", base_addr);
-
-        unsafe {
-            GAME_BASE.search_game_objects();
-            &GAME_BASE
-        }
+        unsafe { &mut GAME_BASE }
     }
 
     pub fn search_game_objects(&mut self) {
@@ -72,7 +68,7 @@ impl GameBase {
     }
 
     pub fn singleton() -> &'static Self {
-        unsafe { &GAME_BASE }
+        unsafe { &mut GAME_BASE }
     }
 
     pub fn console(&self) -> Option<Console> { self.game_console }

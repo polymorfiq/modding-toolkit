@@ -9,6 +9,11 @@ static mut LIBRARIES: Vec<(String, Library)> = vec![];
 
 #[ctor::ctor]
 fn ctor() {
+    loader_main();
+}
+
+#[no_mangle]
+pub extern "C" fn loader_main() {
     let mods_dir = create_mods_dirs().expect("Elefrac Mod Loader - failed to create Mods directories");
     println!("Elefrac Loader - mods_dir: {}", mods_dir.display());
 

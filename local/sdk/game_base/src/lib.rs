@@ -25,9 +25,9 @@ pub mod statics;
 pub use statics::*;
 
 #[cfg(feature = "server-sdk")]
-mod offsets { pub use crate::offsets_server::*; }
+pub mod offsets { pub use crate::offsets_server::*; }
 
 #[cfg(feature = "client-sdk")]
-mod offsets { pub use crate::offsets_client::*; }
+pub mod offsets { pub use crate::offsets_client::*; }
 
 static mut GAME_BASE: GameBase = GameBase::empty("static_init");

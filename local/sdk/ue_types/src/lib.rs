@@ -60,6 +60,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FString>(), 0x8);
         assert_eq!(std::mem::align_of::<FText>(), 0x8);
+        assert_eq!(std::mem::align_of::<FAssetData>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
         assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
         assert_eq!(std::mem::align_of::<UWorld>(), 0x8);
@@ -120,6 +121,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
         assert_eq!(std::mem::size_of::<FText>(), 0x18);
+        assert_eq!(std::mem::size_of::<FAssetData>(), 0x68);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);
         assert_eq!(std::mem::size_of::<FWorldPSCPool>(), 0x58);

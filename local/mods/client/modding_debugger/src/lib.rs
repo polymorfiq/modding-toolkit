@@ -3,13 +3,16 @@ use std::ffi::c_void;
 
 use game_base::*;
 use ue_types::*;
-use utils::logln;
+use utils::{debug, logln};
 
 static MOD_NAME: &'static str = "modding_debugger";
 
 #[no_mangle]
-fn mod_main(base_addr: *const c_void) {
+fn mod_main_sync(base_addr: *const c_void) {
     let game_base = GameBase::initialize(MOD_NAME, base_addr);
+    debug!("modding-debugger - HOOKING");
+    injection_utils::hooks::various::intercept().unwrap();
+    // game_base.search_game_objects();
     
     // Logs debug message to in-game console
     utils::log::set_print_to_console(Box::new(|msg| {
@@ -17,8 +20,8 @@ fn mod_main(base_addr: *const c_void) {
         if console.is_some() { console.unwrap().output_text(msg) };
     }));
 
-    injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
-    injection_utils::hooks::various::intercept().unwrap();
+    // injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
+    debug!("modding-debugger - HOOKED");
 }
 
 fn intercept_console_command(_console: Console, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {

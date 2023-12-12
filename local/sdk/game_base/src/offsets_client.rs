@@ -19,3 +19,6 @@ pub const OFFSET_VF_ACONTROLLER_INAVAGENT: isize = 0x599c138;
 
 // Main Menu
 pub const OFFSET_FUNC_MAIN_MENU_CONNECT_TO_SERVER: isize = 0xDB80F0;
+
+// Asset Registery
+pub const OFFSET_FUNC_ASSET_REGISTRY_ADD_ASSET_DATA: isize = 0x1598CE0;
