@@ -32,6 +32,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<FVector>(), 0x4);
         assert_eq!(std::mem::align_of::<FColor>(), 0x4);
         assert_eq!(std::mem::align_of::<FBox>(), 0x4);
+        assert_eq!(std::mem::align_of::<FDelegateBase>(), 0x8);
         assert_eq!(std::mem::align_of::<FGCObject>(), 0x8);
         assert_eq!(std::mem::align_of::<FBoxSphereBounds>(), 0x4);
         assert_eq!(std::mem::align_of::<FRotationConversionCache>(), 0x8);
@@ -46,6 +47,8 @@ mod tests {
         assert_eq!(std::mem::align_of::<TBaseDynamicMulticastDelegate>(), 0x8);
         assert_eq!(std::mem::align_of::<FSubsystemCollection<UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FExec>(), 0x8);
+        assert_eq!(std::mem::align_of::<FPrimaryAssetType>(), 0x4);
+        assert_eq!(std::mem::align_of::<FPrimaryAssetId>(), 0x4);
         assert_eq!(std::mem::align_of::<FAutoCompleteNode>(), 0x8);
         assert_eq!(std::mem::align_of::<FGuid>(), 0x4);
         assert_eq!(std::mem::align_of::<FTickFunction>(), 0x8);
@@ -89,6 +92,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<FRotator>(), 0xC);
         assert_eq!(std::mem::size_of::<FVector>(), 0xC);
         assert_eq!(std::mem::size_of::<FColor>(), 0x4);
+        assert_eq!(std::mem::size_of::<FDelegateBase>(), 0x10);
         assert_eq!(std::mem::size_of::<FBox>(), 0x1C);
         assert_eq!(std::mem::size_of::<FGCObject>(), 0x10);
         assert_eq!(std::mem::size_of::<FRotationConversionCache>(), 0x20);
@@ -107,6 +111,8 @@ mod tests {
         assert_eq!(std::mem::size_of::<TBaseDynamicMulticastDelegate>(), 0x10);
         assert_eq!(std::mem::size_of::<FSubsystemCollection<UnknownType>>(), 0xC8);
         assert_eq!(std::mem::size_of::<FExec>(), 0x8);
+        assert_eq!(std::mem::size_of::<FPrimaryAssetType>(), 0xC);
+        assert_eq!(std::mem::size_of::<FPrimaryAssetId>(), 0x18);
         assert_eq!(std::mem::size_of::<FAutoCompleteNode>(), 0x28);
         assert_eq!(std::mem::size_of::<FGuid>(), 0x10);
         assert_eq!(std::mem::size_of::<FTickFunction>(), 0x50);

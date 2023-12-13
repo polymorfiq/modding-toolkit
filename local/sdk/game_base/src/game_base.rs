@@ -67,7 +67,7 @@ impl GameBase {
         }
     }
 
-    pub fn singleton() -> &'static Self {
+    pub fn singleton() -> &'static mut Self {
         unsafe { &mut GAME_BASE }
     }
 

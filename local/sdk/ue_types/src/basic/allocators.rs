@@ -4,6 +4,13 @@ use crate::*;
 
 #[derive(Debug, Copy, Clone)]
 #[repr(C, align(0x8))]
+pub struct FHeapAllocatorForElementType<T> {
+    // Size: 0x8
+    pub data: *const T
+}
+
+#[derive(Debug, Copy, Clone)]
+#[repr(C, align(0x8))]
 pub struct FHeapAllocatorForAnyElementType {
     // Size: 0x8
     pub data: *const UnknownType

@@ -10,6 +10,9 @@ pub use f_box_sphere_bounds::*;
 mod f_chunked_fixed_uobject_array;
 pub use f_chunked_fixed_uobject_array::*;
 
+mod f_delegate_base;
+pub use f_delegate_base::*;
+
 mod f_gc_object;
 pub use f_gc_object::*;
 
@@ -21,6 +24,12 @@ pub use f_output_device::*;
 
 mod f_physics_volume_changed;
 pub use f_physics_volume_changed::*;
+
+mod f_primary_asset_type;
+pub use f_primary_asset_type::*;
+
+mod f_primary_asset_id;
+pub use f_primary_asset_id::*;
 
 mod f_rep_attachment;
 pub use f_rep_attachment::*;

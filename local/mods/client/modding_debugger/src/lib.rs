@@ -10,19 +10,22 @@ static MOD_NAME: &'static str = "modding_debugger";
 #[no_mangle]
 fn mod_main_sync(base_addr: *const c_void) {
     let game_base = GameBase::initialize(MOD_NAME, base_addr);
-    debug!("modding-debugger - HOOKING");
     injection_utils::hooks::various::intercept().unwrap();
-    // game_base.search_game_objects();
-    
-    // Logs debug message to in-game console
-    utils::log::set_print_to_console(Box::new(|msg| {
-        let console = game_base.console();
-        if console.is_some() { console.unwrap().output_text(msg) };
-    }));
-
-    // injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
-    debug!("modding-debugger - HOOKED");
 }
+
+// #[no_mangle]
+// fn mod_main(base_addr: *const c_void) {
+//     let game_base = GameBase::singleton();
+//     game_base.search_game_objects();
+    
+//     // Logs debug message to in-game console
+//     utils::log::set_print_to_console(Box::new(|msg| {
+//         let console = game_base.console();
+//         if console.is_some() { console.unwrap().output_text(msg) };
+//     }));
+
+//     injection_utils::hooks::console::add_command_intercept(intercept_console_command).expect(format!("[{}]: Could not intercept Console Commands!", MOD_NAME).as_str());
+// }
 
 fn intercept_console_command(_console: Console, cmd: &FString) -> Result<bool, Box<dyn std::error::Error>> {
     let cmd_str = cmd.to_string().trim_end_matches([0x00 as char]).to_string();
