@@ -34,6 +34,7 @@ pub extern "C" fn loader_main() {
     }
 
     thread::spawn(move || {
+        thread::sleep(std::time::Duration::from_millis(5000));
         let base_addr = unsafe { GetModuleHandleA(std::ptr::null()) as *const c_void };
         
         match load_mods(mods_dir.join("dlls"), base_addr) {

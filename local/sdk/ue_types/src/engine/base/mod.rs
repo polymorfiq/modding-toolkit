@@ -46,6 +46,9 @@ pub use f_rotator::*;
 mod f_seamless_travel_handler;
 pub use f_seamless_travel_handler::*;
 
+mod f_soft_object_path;
+pub use f_soft_object_path::*;
+
 mod f_struct_base_chain;
 pub use f_struct_base_chain::*;
 

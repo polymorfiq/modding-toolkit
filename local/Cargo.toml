@@ -6,6 +6,7 @@ members = [
     "sdk/ue_types",
     "sdk/injection_utils",
     "sdk/utils",
+    "mods/client/asset_buddy",
     "mods/client/pathfinder",
     "mods/client/modding_debugger",
     "mods/client/tdm_helper"

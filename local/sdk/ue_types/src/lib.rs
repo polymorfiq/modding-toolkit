@@ -13,6 +13,9 @@ pub use controllers::*;
 pub mod interface;
 pub use interface::*;
 
+pub mod ue_widestring { pub use widestring::*; }
+pub mod ue_endian { pub use simple_endian::*; }
+
 #[cfg(test)]
 mod tests {
     use crate::*;
@@ -63,6 +66,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x8);
         assert_eq!(std::mem::align_of::<FString>(), 0x8);
         assert_eq!(std::mem::align_of::<FText>(), 0x8);
+        assert_eq!(std::mem::align_of::<FSoftObjectPath>(), 0x8);
         assert_eq!(std::mem::align_of::<FAssetData>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
         assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
@@ -127,6 +131,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<TMulticastDelegate<UnknownType, UnknownType>>(), 0x18);
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
         assert_eq!(std::mem::size_of::<FText>(), 0x18);
+        assert_eq!(std::mem::size_of::<FSoftObjectPath>(), 0x20);
         assert_eq!(std::mem::size_of::<FAssetData>(), 0x68);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);

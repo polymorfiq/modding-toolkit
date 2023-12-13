@@ -1,6 +1,6 @@
 use retour::static_detour;
 use ue_types::{FString, UConsole};
-use game_base::{Console, GameBase, VirtualObject};
+use game_base::{Console, GameBase, GameConsole, VirtualObject};
 use utils::{debug, warning};
 
 static_detour! {
@@ -11,7 +11,9 @@ type CommandInterceptShiv = fn(Console, &FString) -> Result<bool, Box<dyn std::e
 static mut CMD_INTERCEPT_SHIV: Option<CommandInterceptShiv> = None;
 
 pub fn add_command_intercept(shiv_fn: CommandInterceptShiv) -> Result<(), Box<dyn std::error::Error>> {
-    match GameBase::singleton().console() {
+    GameConsole::wait_for_loaded();
+    
+    match GameConsole::get() {
         Some(console) => {
             unsafe {
                 CMD_INTERCEPT_SHIV = Some(shiv_fn);

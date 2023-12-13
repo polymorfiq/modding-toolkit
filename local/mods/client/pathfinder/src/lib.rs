@@ -9,12 +9,12 @@ static MOD_NAME: &'static str = "pathfinder";
 
 #[no_mangle]
 fn mod_main(base_addr: *const c_void) {
-    let game_base = GameBase::initialize(MOD_NAME, base_addr);
-    game_base.search_game_objects();
+    GameBase::initialize(MOD_NAME, base_addr);
+    std::thread::sleep(std::time::Duration::from_millis(5000));
     
     // Logs debug message to in-game console
     utils::log::set_print_to_console(Box::new(|msg| {
-        let console = game_base.console();
+        let console = GameConsole::get();
         if console.is_some() { console.unwrap().output_text(msg) };
     }));
 
