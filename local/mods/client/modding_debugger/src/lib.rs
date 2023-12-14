@@ -23,7 +23,7 @@ fn mod_main_sync(base_addr: *const c_void) {
         debug!("Loading mod-debugger async code...");
 
         GObjects::filter(|obj| {
-            if obj.full_name().contains("ObjectLibrary") {
+            if obj.class().is_some() && obj.class().unwrap().full_name().contains("ObjectLibrary") {
                 debug!("OBJ FOUND: {:?} - {:?} - {:?}", Object::new(obj), obj.full_name(), obj.class().unwrap().full_name());
             }
 

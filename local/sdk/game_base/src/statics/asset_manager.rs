@@ -14,14 +14,14 @@ impl AssetManager {
         match known_addr {
             Some(addr) => Some(Self{addr: addr}),
             None => {
-                let manager_regex = regex::Regex::new(r"/Engine/Transient.GameEngine_([0-9]+)\.GAssetManager_([0-9]+)\.Console_([0-9]+)").unwrap();
-                let managers = GObjects::filter(|obj| {
-                    manager_regex.is_match(obj.full_name().as_str())
+                let manager = GObjects::find_first(|obj| {
+                    let class = obj.class();
+                    class.is_some() && class.unwrap().full_name() == "/Script/g3.GAssetManager"
                 });
 
-                if managers.len() == 0 { return None };
+                if manager.is_none() { return None };
                 unsafe {
-                    MANAGER_ADDR = Some(managers[0] as *const UnknownType);
+                    MANAGER_ADDR = Some(manager.unwrap() as *const UnknownType);
                     Some(Self{addr: MANAGER_ADDR.unwrap()})
                 }
             }

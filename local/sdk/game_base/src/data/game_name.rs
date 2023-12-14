@@ -1,11 +1,16 @@
 use crate::*;
 use ue_types::*;
+use std::ffi::CString;
 
 #[derive(Copy, Clone)]
 pub struct GameName(*const FName);
 
 pub trait VirtualGameName {
     fn game_name(&self) -> GameName;
+
+    fn f_name(&self) -> FName {
+        unsafe { *self.game_name().0 }
+    }
     
     fn to_string(&self) -> String { self.to_fstring().to_string() }
     
@@ -50,4 +55,33 @@ impl std::fmt::Debug for GameName {
 
 impl<'a> std::string::ToString for GameName {
     fn to_string (&self) -> String { VirtualGameName::to_string(self) }
+}
+
+impl From<String> for GameName {
+    fn from(s: String) -> GameName {
+        let result: Box<FName> = Box::new(FName{
+            comparison_idx: 0.into(),
+            display_idx: 0.into(),
+            number: 0.into()
+        });
+
+        let static_name = Box::leak(result);
+        let fname_constructor: fn(*mut FName, *const i8, u32) = unsafe {
+            std::mem::transmute(GameBase::singleton().at_offset(offsets::OFFSET_FUNC_FNAME_STR_CONSTRUCTOR) )
+        };
+
+        let contents = CString::new(s.as_str()).unwrap();
+        let e_find_name: u32 = 0x1; // FName_Add
+
+        (fname_constructor)(&mut *static_name, contents.as_ptr(), e_find_name);
+        
+        GameName(std::ptr::addr_of!(*static_name))
+    }
+}
+
+
+impl From<&str> for GameName {
+    fn from(s: &str) -> GameName {
+        s.to_string().into()
+    }
 }

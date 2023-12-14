@@ -31,4 +31,21 @@ impl GObjects {
 
         return filtered
     }
+
+    pub fn find_first(test: impl Fn(&UObject<*const UnknownType>) -> bool) -> Option<*const UObject<*const UnknownType>> {
+        let g_objects = Self::objects::<UnknownType>();
+        
+        let mut found: Option<*const UObject<*const UnknownType>> = None;
+        for i in 0..(g_objects.num_elements.to_native()-1) {
+            let item = g_objects.item_at_idx(i as usize);
+            let object = if item.is_some() { unsafe { (*item.unwrap()).object::<UObject<*const UnknownType>>() } } else { None };
+            
+            if object.is_some() && (test)(object.unwrap()) {
+                found = Some(std::ptr::addr_of!(*object.unwrap()));
+                break;
+            }
+        }
+
+        return found
+    }
 }

@@ -230,11 +230,12 @@ fn my_set_from_asset_data(this: *const UnknownType, asset_data: *const FAssetDat
 }
 
 fn my_update_cached_asset_data(this: *const UnknownType, primary_asset_id: *const FPrimaryAssetId, asset_data: *const FAssetData, b_allow_duplicates: bool) {
-    // let asset_id = unsafe { *primary_asset_id };
     // let data = AssetData::new(asset_data);
     // let package_data = data.asset_data().package_data.to_string();
 
-    // println!("Updating cached Asset data: {:p}", this);
+    // if unsafe { (*primary_asset_id).primary_asset_type.name.to_string() == "RawSkin" } {
+        // println!("Updating cached Asset data: {:?} - {:?}", AssetId::new(primary_asset_id), data);
+    // }
 
     UpdateCachedAssetData.call(this, primary_asset_id, asset_data, b_allow_duplicates);
 }

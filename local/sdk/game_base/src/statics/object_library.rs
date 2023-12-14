@@ -15,13 +15,13 @@ impl ObjectLibrary {
         match known_addr {
             Some(addr) => Some(Self{addr: addr}),
             None => {
-                let libraries = GObjects::filter(|obj| {
-                    obj.full_name().as_str() == "/Script/Engine.ObjectLibrary"
+                let library = GObjects::find_first(|obj| {
+                    obj.full_name() == "/Script/Engine.Default__ObjectLibrary"
                 });
 
-                if libraries.len() == 0 { return None };
+                if library.is_none() { return None };
                 unsafe {
-                    OBJECT_LIBRARY_ADDR = Some(libraries[0] as *const UnknownType);
+                    OBJECT_LIBRARY_ADDR = Some(library.unwrap() as *const UnknownType);
                     Some(Self{addr: OBJECT_LIBRARY_ADDR.unwrap()})
                 }
             }
