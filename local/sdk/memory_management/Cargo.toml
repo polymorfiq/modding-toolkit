@@ -1,12 +1,9 @@
 [package]
-name = "uasset_editor"
+name = "memory_management"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-glob = "0.3.1"
-uasset = "^0.5.0"
-unreal_asset = "^0.1.16"
 ue_types = { workspace = true }

@@ -1,5 +1,6 @@
 use crate::*;
 use ue_types::*;
+use memory_management::strings::fstring;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Console(*const UConsole);
@@ -10,9 +11,10 @@ impl Console {
     }
 
     pub fn console_command(&self, cmd: &str) {
-        let cmd_str = cmd.to_string();
-        let cmd_fstr: Box<FString> = Box::new(format!("{}\0", cmd_str).into());
-        unsafe { (*self.object_virtual_funcs().console_command())(self.0, Box::into_raw(cmd_fstr)); }
+        let cmd_str = format!("{}\0", cmd.to_string());
+        let f_str = fstring(cmd_str);
+
+        unsafe { (*self.object_virtual_funcs().console_command())(self.0, std::ptr::addr_of!(*f_str)); }
     }
 
     pub fn output_text(&self, text: *const FString) {

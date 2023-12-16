@@ -1,7 +1,7 @@
 use crate::*;
 use widestring::{WideChar, WideString};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct FString {
     // Size: 0x10

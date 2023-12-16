@@ -25,15 +25,26 @@ pub use f_gc_object::*;
 mod f_generation_info;
 pub use f_generation_info::*;
 
-
 mod f_network_notify;
 pub use f_network_notify::*;
+
+mod f_object_export;
+pub use f_object_export::*;
+
+mod f_object_import;
+pub use f_object_import::*;
+
+mod f_object_resource;
+pub use f_object_resource::*;
 
 mod f_output_device;
 pub use f_output_device::*;
 
 mod f_package_file_summary;
 pub use f_package_file_summary::*;
+
+mod f_package_index;
+pub use f_package_index::*;
 
 mod f_physics_volume_changed;
 pub use f_physics_volume_changed::*;

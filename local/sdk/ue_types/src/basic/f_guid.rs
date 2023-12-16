@@ -1,6 +1,6 @@
 use simple_endian::u32le;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 #[repr(C)]
 pub struct FGuid {
     // Size: 0x10

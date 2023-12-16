@@ -72,6 +72,9 @@ mod tests {
         assert_eq!(std::mem::align_of::<FSoftObjectPath>(), 0x8);
         assert_eq!(std::mem::align_of::<FCustomVersion>(), 0x4);
         assert_eq!(std::mem::align_of::<FAssetData>(), 0x8);
+        assert_eq!(std::mem::align_of::<FObjectResource>(), 0x8);
+        assert_eq!(std::mem::align_of::<FObjectExport>(), 0x8);
+        assert_eq!(std::mem::align_of::<FObjectImport>(), 0x8);
         assert_eq!(std::mem::align_of::<FPackageFileSummary>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
         assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
@@ -142,6 +145,9 @@ mod tests {
         assert_eq!(std::mem::size_of::<FSoftObjectPath>(), 0x20);
         assert_eq!(std::mem::size_of::<FCustomVersion>(), 0x24);
         assert_eq!(std::mem::size_of::<FAssetData>(), 0x68);
+        assert_eq!(std::mem::size_of::<FObjectResource>(), 0x10);
+        assert_eq!(std::mem::size_of::<FObjectExport>(), 0x88);
+        assert_eq!(std::mem::size_of::<FObjectImport>(), 0x40);
         assert_eq!(std::mem::size_of::<FPackageFileSummary>(), 0x118);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);
