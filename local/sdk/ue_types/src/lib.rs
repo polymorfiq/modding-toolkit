@@ -28,6 +28,9 @@ mod tests {
         assert_eq!(std::mem::align_of::<FRelativeBitReference>(), 0x4);
         assert_eq!(std::mem::align_of::<TConstSetBitIterator<FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TBitArray<FDefaultBitArrayAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<FEngineVersionBase>(), 0x4);
+        assert_eq!(std::mem::align_of::<FEngineVersion>(), 0x8);
+        assert_eq!(std::mem::align_of::<FCustomVersionContainer>(), 0x8);
         assert_eq!(std::mem::align_of::<FVector2D>(), 0x4);
         assert_eq!(std::mem::align_of::<FQuat>(), 0x4);
         assert_eq!(std::mem::align_of::<FIntVector>(), 0x4);
@@ -67,7 +70,9 @@ mod tests {
         assert_eq!(std::mem::align_of::<FString>(), 0x8);
         assert_eq!(std::mem::align_of::<FText>(), 0x8);
         assert_eq!(std::mem::align_of::<FSoftObjectPath>(), 0x8);
+        assert_eq!(std::mem::align_of::<FCustomVersion>(), 0x4);
         assert_eq!(std::mem::align_of::<FAssetData>(), 0x8);
+        assert_eq!(std::mem::align_of::<FPackageFileSummary>(), 0x8);
         assert_eq!(std::mem::align_of::<FUrl>(), 0x8);
         assert_eq!(std::mem::align_of::<FWorldPSCPool>(), 0x8);
         assert_eq!(std::mem::align_of::<UWorld>(), 0x8);
@@ -90,6 +95,9 @@ mod tests {
         assert_eq!(std::mem::size_of::<FRelativeBitReference>(), 0x8);
         assert_eq!(std::mem::size_of::<TConstSetBitIterator<FDefaultBitArrayAllocator>>(), 0x20);
         assert_eq!(std::mem::size_of::<TBitArray<FDefaultBitArrayAllocator>>(), 0x20);
+        assert_eq!(std::mem::size_of::<FEngineVersionBase>(), 0xC);
+        assert_eq!(std::mem::size_of::<FEngineVersion>(), 0x20);
+        assert_eq!(std::mem::size_of::<FCustomVersionContainer>(), 0x10);
         assert_eq!(std::mem::size_of::<FVector2D>(), 0x8);
         assert_eq!(std::mem::size_of::<FQuat>(), 0x10);
         assert_eq!(std::mem::size_of::<FIntVector>(), 0xC);
@@ -132,7 +140,9 @@ mod tests {
         assert_eq!(std::mem::size_of::<FString>(), 0x10);
         assert_eq!(std::mem::size_of::<FText>(), 0x18);
         assert_eq!(std::mem::size_of::<FSoftObjectPath>(), 0x20);
+        assert_eq!(std::mem::size_of::<FCustomVersion>(), 0x24);
         assert_eq!(std::mem::size_of::<FAssetData>(), 0x68);
+        assert_eq!(std::mem::size_of::<FPackageFileSummary>(), 0x118);
         assert_eq!(std::mem::size_of::<FUrl>(), 0x68);
         assert_eq!(std::mem::size_of::<ULevel>(), 0x2B0);
         assert_eq!(std::mem::size_of::<FWorldPSCPool>(), 0x58);

@@ -10,17 +10,30 @@ pub use f_box_sphere_bounds::*;
 mod f_chunked_fixed_uobject_array;
 pub use f_chunked_fixed_uobject_array::*;
 
+mod f_custom_version_container;
+pub use f_custom_version_container::*;
+
 mod f_delegate_base;
 pub use f_delegate_base::*;
 
+mod f_engine_version;
+pub use f_engine_version::*;
+
 mod f_gc_object;
 pub use f_gc_object::*;
+
+mod f_generation_info;
+pub use f_generation_info::*;
+
 
 mod f_network_notify;
 pub use f_network_notify::*;
 
 mod f_output_device;
 pub use f_output_device::*;
+
+mod f_package_file_summary;
+pub use f_package_file_summary::*;
 
 mod f_physics_volume_changed;
 pub use f_physics_volume_changed::*;

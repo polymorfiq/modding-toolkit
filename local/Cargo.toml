@@ -9,7 +9,8 @@ members = [
     "mods/client/asset_buddy",
     "mods/client/pathfinder",
     "mods/client/modding_debugger",
-    "mods/client/tdm_helper"
+    "mods/client/tdm_helper",
+    "utils/uasset_editor"
 ]
 
 [workspace.dependencies]
