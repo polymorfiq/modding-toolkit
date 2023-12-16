@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 ue_types = { workspace = true }
+memory_management = { workspace = true }
 widestring = "1.0.2"
 
 [features]

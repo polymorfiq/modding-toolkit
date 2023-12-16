@@ -1,6 +1,7 @@
 // UConsole VF Table Client Addr: 0x7FF7506D1450
 use ue_types::FString;
 use widestring::WideString;
+use memory_management::strings::fstring;
 
 static mut PRINT_TO_CONSOLE: Option<Box<dyn Fn(&FString)>> = None;
 pub fn set_print_to_console(print_fn: Box<dyn Fn(&FString)>) {
@@ -38,12 +39,11 @@ pub fn do_error(message: &str) {
 }
 
 fn print_to_game_console(message: String) {
-    let msg: WideString = format!("{}\0", message).into();
-    let f_str_msg: FString = msg.into();
+    let f_str_msg = fstring(format!("{}\0", message).to_string());
 
     unsafe {
         if PRINT_TO_CONSOLE.is_some() {
-            (PRINT_TO_CONSOLE.as_ref().unwrap())(&f_str_msg)
+            (PRINT_TO_CONSOLE.as_ref().unwrap())(f_str_msg)
         }
     }
 }
