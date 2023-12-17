@@ -28,8 +28,8 @@ fn intercept_console_command(_console: Console, cmd: &FString) -> Result<bool, B
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
         ("getplayerpos", _) => {
-            let game_instance = GameInstance::instance();
-            let local_player = game_instance.local_players.at_index(0);
+            let game_instance = GameInstance::instance().expect("Could not fetch game instance");
+            let local_player = game_instance.base().unwrap().local_players.at_index(0);
             if !local_player.is_ok() {
                 debug!("Local Player not found?!");
                 return Ok(false)

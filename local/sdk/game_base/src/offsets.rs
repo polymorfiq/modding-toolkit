@@ -17,7 +17,8 @@ pub struct BaseFuncOffsets {
     pub getnames: isize,
     pub get_display_name: isize,
     pub fname_to_string: isize,
-    pub fname_str_constructor: isize
+    pub fname_str_constructor: isize,
+    pub get_game_mode: isize
 }
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -48,7 +49,8 @@ impl GameOffsets {
                 getnames: 0x0,
                 get_display_name: 0x0,
                 fname_to_string: 0x0,
-                fname_str_constructor: 0x0
+                fname_str_constructor: 0x0,
+                get_game_mode: 0x0
             },
             vf_tables: VFTableOffsets {
                 console_uobject: 0x0,

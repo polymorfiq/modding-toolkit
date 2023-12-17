@@ -28,6 +28,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<FRelativeBitReference>(), 0x4);
         assert_eq!(std::mem::align_of::<TConstSetBitIterator<FDefaultBitArrayAllocator>>(), 0x8);
         assert_eq!(std::mem::align_of::<TBitArray<FDefaultBitArrayAllocator>>(), 0x8);
+        assert_eq!(std::mem::align_of::<FDataTableRowHandle>(), 0x8);
         assert_eq!(std::mem::align_of::<FEngineVersionBase>(), 0x4);
         assert_eq!(std::mem::align_of::<FEngineVersion>(), 0x8);
         assert_eq!(std::mem::align_of::<FCustomVersionContainer>(), 0x8);
@@ -89,6 +90,7 @@ mod tests {
         assert_eq!(std::mem::align_of::<APawn>(), 0x8);
         assert_eq!(std::mem::align_of::<AGameModeBase>(), 0x8);
         assert_eq!(std::mem::align_of::<AGameMode>(), 0x8);
+        assert_eq!(std::mem::align_of::<APlayerState>(), 0x8);
     }
     
     #[test]

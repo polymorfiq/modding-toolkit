@@ -13,6 +13,9 @@ pub use f_chunked_fixed_uobject_array::*;
 mod f_custom_version_container;
 pub use f_custom_version_container::*;
 
+mod f_data_table_row_handle;
+pub use f_data_table_row_handle::*;
+
 mod f_delegate_base;
 pub use f_delegate_base::*;
 

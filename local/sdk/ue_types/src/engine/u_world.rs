@@ -30,7 +30,7 @@ pub struct UWorld {
     _b_something: u8,
     _b_something_b: u32le,
     pub navigation_system: *const UnknownType,
-    pub authority_game_mode: *const UnknownType,
+    pub authority_game_mode: *const AXGameMode,
     pub game_state: *const UnknownType,
     pub ai_system: *const UnknownType,
     pub avoidance_manager: *const UnknownType,

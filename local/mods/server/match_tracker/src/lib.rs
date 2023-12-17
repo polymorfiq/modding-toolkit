@@ -28,8 +28,10 @@ const MESSAGE_SIZE: usize = 1;
 
 fn handle_client(mut stream: TcpStream) {
     loop {
-        let message = read_message(&mut stream).expect("Could not parse message");
+        let message = read_message(&mut stream);
+        if !message.is_ok() { break };
 
+        let message = message.unwrap();
         match message.trim() {
             "" => (),
             
@@ -38,8 +40,15 @@ fn handle_client(mut stream: TcpStream) {
                 break;
             },
 
+            "get_key_addresses" => {
+                stream.write(format!("WORLD PROXY: {:p}\n", WorldProxy::proxy().expect("No World Proxy...")).as_bytes()).expect("Tried to write to TCP Stream");
+                stream.write(format!("WORLD: {:p}\n", WorldProxy::world().expect("No World...")).as_bytes()).expect("Tried to write to TCP Stream");
+                stream.write(format!("LEVEL: {:p}\n", WorldProxy::level().expect("No Level...")).as_bytes()).expect("Tried to write to TCP Stream");
+                stream.write(format!("GAME INSTANCE: {:p}\n", GameInstance::instance().expect("No Game Instance...").base().unwrap()).as_bytes()).expect("Tried to write to TCP Stream");
+            },
+
             "get_players" => {
-                let match_state = MatchState::default();
+                let match_state = get_match_state();
                 let json_str = serde_json::to_string(&match_state).unwrap();
 
                 stream.write(json_str.as_bytes()).expect("Tried to write to TCP Stream");

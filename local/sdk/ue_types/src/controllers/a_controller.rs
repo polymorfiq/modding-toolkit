@@ -6,7 +6,7 @@ pub struct AController {
     // Size: 0x03A8
     pub base_actor: AActor,
     pub base_nav_agent: INavAgentInterface<AController>,
-    pub player_state: *const UnknownType,
+    pub player_state: *const APlayerState,
     pub start_spot: TWeakObjectPtr<AActor>,
     pub on_instigated_any_damage: TBaseDynamicMulticastDelegate,
     pub state_name: FName,
