@@ -8,7 +8,7 @@ pub trait FNameFuncs {
 impl FNameFuncs for FName {
     fn to_fstring(&self) -> Option<FString> {
         let to_string_fn: fn(this: *const FName, result: *mut FString) -> *const FString = unsafe { 
-            std::mem::transmute(GameBase::singleton().at_offset(offsets::OFFSET_FUNC_FNAME_TO_STRING))
+            std::mem::transmute(GameBase::singleton().at_offset(OFFSETS.base_funcs.fname_to_string))
         };
 
         let result: Box<FString> = Box::new("".into());

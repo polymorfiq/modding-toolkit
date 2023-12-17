@@ -12,6 +12,5 @@ utils = { workspace = true }
 regex = "1.10.2"
 
 [features]
-default = ["client-sdk"]
+default = []
 client-sdk = []
-server-sdk = []

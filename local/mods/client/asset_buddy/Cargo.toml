@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ue_types = { workspace = true }
-game_base = { workspace = true, features = ["client-sdk"] }
+game_base = { workspace = true }
 injection_utils = { workspace = true }
 utils = { workspace = true }
 glob = "0.3.1"

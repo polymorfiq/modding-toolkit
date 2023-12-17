@@ -6,6 +6,8 @@ static MOD_NAME: &'static str = "asset_buddy";
 
 #[no_mangle]
 fn mod_main_sync(base_addr: *const c_void) {
+    unsafe { game_base::OFFSETS = game_base::offsets_client::get_offsets() };
+
     GameBase::initialize(MOD_NAME, base_addr);
     injection_utils::hooks::asset_manager::bypass_pak_restriction_check().expect("Unable to load asset buddy (bypass pak restriction)!");
     injection_utils::hooks::asset_manager::force_asset_loads_from_disk().expect("Unable to load asset buddy (force load from disk)!");

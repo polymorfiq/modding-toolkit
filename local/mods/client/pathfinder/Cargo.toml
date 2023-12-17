@@ -14,6 +14,6 @@ crate-type = ["cdylib"]
 # utils = { git = "https://github.com/polymorfiq/modding-toolkit.git", "rev" = "c9ed7429a1b74f68b9074e044e023ebe6d8c48f1" }
 
 ue_types = { workspace = true }
-game_base = { workspace = true, features = ["client-sdk"] }
+game_base = { workspace = true }
 injection_utils = { workspace = true }
 utils = { workspace = true }

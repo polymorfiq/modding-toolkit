@@ -9,6 +9,8 @@ static MOD_NAME: &'static str = "modding_debugger";
 
 #[no_mangle]
 fn mod_main_sync(base_addr: *const c_void) {
+    unsafe { game_base::OFFSETS = game_base::offsets_client::get_offsets() };
+    
     GameBase::initialize(MOD_NAME, base_addr);
     injection_utils::hooks::various::intercept().unwrap();
 
@@ -39,7 +41,7 @@ fn intercept_console_command(_console: Console, cmd: &FString) -> Result<bool, B
 
     let should_forward = match (cmd_str.as_str(), cmd_str.split_once(" ")) {
         (_, Some(("start_game", _))) => {
-            MainMenu::connect_to_server("127.0.0.1", "7777", "");
+            // MainMenu::connect_to_server("127.0.0.1", "7777", "");
             false
         },
 

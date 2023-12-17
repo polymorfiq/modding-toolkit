@@ -1,6 +1,5 @@
 // UConsole VF Table Client Addr: 0x7FF7506D1450
 use ue_types::FString;
-use widestring::WideString;
 use memory_management::strings::fstring;
 
 static mut PRINT_TO_CONSOLE: Option<Box<dyn Fn(&FString)>> = None;

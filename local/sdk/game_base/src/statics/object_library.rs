@@ -30,7 +30,7 @@ impl ObjectLibrary {
 
     pub fn load_assets_from_path(&self, path: String) -> u32le {        
         let load_assets_from_path: fn(*const UnknownType, *const FString) -> u32le = unsafe {
-            std::mem::transmute(GameBase::singleton().at_offset(offsets::OFFSET_FUNC_OBJECT_LIBRARY_LOAD_ASSETS_AT_PATH))
+            std::mem::transmute(GameBase::singleton().at_offset(OFFSETS.asset_funcs.object_library_load_assets_at_path))
         };
 
         let path_fstring: Box<FString> = Box::new(path.into());

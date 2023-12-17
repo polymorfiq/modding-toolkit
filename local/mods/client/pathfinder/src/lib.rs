@@ -9,6 +9,8 @@ static MOD_NAME: &'static str = "pathfinder";
 
 #[no_mangle]
 fn mod_main(base_addr: *const c_void) {
+    unsafe { game_base::OFFSETS = game_base::offsets_client::get_offsets() };
+    
     GameBase::initialize(MOD_NAME, base_addr);
     std::thread::sleep(std::time::Duration::from_millis(5000));
     

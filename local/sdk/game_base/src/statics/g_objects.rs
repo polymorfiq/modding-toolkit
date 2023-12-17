@@ -6,7 +6,7 @@ pub struct GObjects {}
 impl GObjects {
     pub fn gobjects<'a, VFTable>() -> &'a FUObjectArray<VFTable> {
         unsafe {
-            std::mem::transmute(GameBase::singleton().at_offset(crate::offsets::OFFSET_STRUCT_GOBJECTS))
+            std::mem::transmute(GameBase::singleton().at_offset(OFFSETS.base_structs.gobjects))
         }
     }
 

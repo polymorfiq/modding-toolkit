@@ -5,7 +5,7 @@ pub struct WorldProxy {}
 
 impl WorldProxy {
     pub fn proxy() -> &'static UWorldProxy {
-        unsafe { (GameBase::singleton().at_offset(crate::offsets::OFFSET_STRUCT_UWORLD_PROXY) as *const UWorldProxy).as_ref::<'static>().unwrap() }
+        unsafe { (GameBase::singleton().at_offset(crate::OFFSETS.base_structs.uworld_proxy) as *const UWorldProxy).as_ref::<'static>().unwrap() }
     }
 
     pub fn world() -> &'static UWorld {
