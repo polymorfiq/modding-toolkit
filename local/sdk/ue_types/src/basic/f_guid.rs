@@ -1,11 +1,9 @@
-use simple_endian::u32le;
-
 #[derive(Debug, Copy, Clone, Default)]
 #[repr(C)]
 pub struct FGuid {
     // Size: 0x10
-    pub a: u32le,
-    pub b: u32le,
-    pub c: u32le,
-    pub d: u32le
+    pub a: u32,
+    pub b: u32,
+    pub c: u32,
+    pub d: u32
 }

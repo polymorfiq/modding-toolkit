@@ -2,16 +2,12 @@
 
 members = [
     "mod_loader",
-    "sdk/game_base",
-    "sdk/ue_types",
-    "sdk/injection_utils",
-    "sdk/utils",
-    "sdk/memory_management",
     "mods/client/asset_buddy",
     "mods/client/pathfinder",
     "mods/client/modding_debugger",
     "mods/client/tdm_helper",
     "mods/server/match_tracker",
+    "utils/uasset_editor"
 ]
 
 [workspace.dependencies]

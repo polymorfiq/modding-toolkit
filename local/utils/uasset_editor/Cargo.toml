@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 glob = "0.3.1"
-uasset = "^0.5.0"
+unpak = "1.0.4"
 unreal_asset = "^0.1.16"
 ue_types = { workspace = true }

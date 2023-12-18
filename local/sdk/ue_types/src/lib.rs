@@ -1,4 +1,3 @@
-#![feature(pointer_byte_offsets)]
 use core::ffi::c_void;
 
 pub mod basic;

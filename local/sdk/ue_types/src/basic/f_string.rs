@@ -1,58 +1,55 @@
 use crate::*;
-use widestring::{WideChar, WideString};
+pub use widestring::utfstring::Utf16String;
 
 #[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct FString {
     // Size: 0x10
-    pub data: TArray<WideChar, FDefaultAllocator>
+    pub data: TArray<u16, FDefaultAllocator>
 }
 
 impl FString {
-    pub fn to_wide_string(&self) -> WideString {
-        let mut chars: Vec<WideChar> = vec![];
+    pub fn to_wide_string(&self) -> Utf16String {
+        let mut chars: Vec<u16> = vec![];
         if self.data.len() == 0 { return "".to_string().into() };
 
         for i in 0..self.data.len() {
             match self.data.at_index(i) {
                 Ok(curr) => chars.push(*curr),
-                _ => chars.push('?' as WideChar)
+                _ => chars.push('?' as u16)
             }
         }
 
-        WideString::from_vec(chars)
+        Utf16String::from_vec(chars).unwrap()
     }
     pub fn len(&self) -> usize { self.data.len() }
 }
 
 impl std::string::ToString for FString {
     fn to_string (&self) -> String {
-        match self.to_wide_string().to_string() {
-            Ok(string_data) => string_data.trim_end_matches([0x00 as char]).to_string(),
-            _ => "<fstring_parse_error>".to_string()
-        }
+        self.to_wide_string().to_string().trim_end_matches([0x00 as char]).to_string()
     }
 }
 
 impl From<String> for FString {
     fn from(str_data: String) -> FString {
-        WideString::from_str(str_data.as_str()).into()
+        Utf16String::from_str(str_data.as_str()).into()
     }
 }
 
 impl From<&str> for FString {
     fn from(str_data: &str) -> FString {
-        WideString::from_str(str_data).into()
+        Utf16String::from_str(str_data).into()
     }
 }
 
-impl From<WideString> for FString {
-    fn from(ws: WideString) -> FString {
-        let char_ptr = ws.as_ptr() as *const WideChar;
+impl From<Utf16String> for FString {
+    fn from(ws: Utf16String) -> FString {
+        let char_ptr = ws.as_ptr() as *const u16;
         let str_len = ws.len() as u32;
         let capacity = ws.capacity() as u32;
 
-        let str_array = TArray::<WideChar, FDefaultAllocator>::from_data(char_ptr, str_len, capacity);
+        let str_array = TArray::<u16, FDefaultAllocator>::from_data(char_ptr, str_len, capacity);
 
         FString{data: str_array}
     }
