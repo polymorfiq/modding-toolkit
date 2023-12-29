@@ -24,6 +24,9 @@ pub const fn get_offsets() -> GameOffsets {
     offsets.asset_funcs.asset_manager_scan_path_for_primary_assets = 0x213F600;
     offsets.asset_funcs.object_library_load_assets_at_path = 0x2479280;
     offsets.asset_funcs.fpakfile_find = 0x1ff9800;
+    offsets.asset_funcs.fpakfile_setup_signed_pak_reader = 0x2006B50;
+    offsets.asset_funcs.fpakplatformfile_mount = 0x2000350;
+    offsets.asset_funcs.fpackagename_register_mount_point = 0x114E980;
 
     offsets
 }

@@ -11,5 +11,8 @@ crate-type = ["cdylib"]
 ue_types = { workspace = true }
 game_base = { workspace = true }
 injection_utils = { workspace = true }
+memory_management = { workspace = true }
 utils = { workspace = true }
 glob = "0.3.1"
+serde = "1.0.193"
+serde_yaml = "0.8.7"

@@ -1,5 +1,3 @@
-#![feature(pointer_byte_offsets)]
-
 mod game_base;
 pub use game_base::*;
 

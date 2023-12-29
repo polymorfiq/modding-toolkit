@@ -1,5 +1,5 @@
 use ue_types::*;
-use ue_types::ue_widestring::{ustring::Utf16String};
+use ue_types::ue_widestring::{utfstring::Utf16String};
 
 static mut STRINGS: Vec<Utf16String> = vec![];
 static mut FSTRINGS: Vec<FString> = vec![];

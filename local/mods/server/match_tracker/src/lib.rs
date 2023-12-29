@@ -1,7 +1,7 @@
-#![feature(pointer_byte_offsets)]
 use std::ffi::c_void;
 use std::net::{TcpListener, TcpStream};
 use std::thread;
+use std::panic;
 use std::io::{Read, Write};
 use game_base::*;
 
@@ -100,7 +100,9 @@ fn listen_for_connections() {
         match stream {
             Ok(stream) => {
                 thread::spawn(|| {
-                    handle_client(stream)
+                    panic::catch_unwind(|| {
+                        handle_client(stream)
+                    })
                 });
             },
 

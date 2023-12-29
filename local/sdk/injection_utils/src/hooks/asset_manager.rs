@@ -2,10 +2,31 @@ use retour::static_detour;
 use ue_types::*;
 use game_base::*;
 use utils::debug;
+use ue_types::ue_widestring::*;
 
 static_detour! {
     static IsNonPakFilenameAllowed: fn(*const UnknownType, *const FString) -> bool;
     static FPakFileFind: fn(*const UnknownType, *const FString, *const UnknownType) -> u8;
+    static PakFileSetupSignedPakReader: fn(*const UnknownType, *const UnknownType, *const UnknownType) -> *const UnknownType;
+    static FPakDoSignatureCheck: fn(bool, *const UnknownType, i32);
+}
+
+pub fn bypass_pak_sig_check() -> Result<(), Box<dyn std::error::Error>> {
+    // unsafe {
+    //     let setup_signed_pak_reader: fn(*const UnknownType, *const UnknownType, *const UnknownType) -> *const UnknownType = std::mem::transmute(GameBase::singleton().at_offset(game_base::OFFSETS.asset_funcs.fpakfile_setup_signed_pak_reader));
+    //     PakFileSetupSignedPakReader.initialize(setup_signed_pak_reader, bypassed_setup_signed_pak_reader).expect("Could not setup Pak Signature bypass");
+    //     PakFileSetupSignedPakReader.enable().expect("Could not enable Pak Signature bypass");
+    // }
+
+    // unsafe {
+    //     let do_signature_check: fn(bool, *const UnknownType, i32) = std::mem::transmute(GameBase::singleton().at_offset(0x1ff8250));
+
+    //     FPakDoSignatureCheck.initialize(do_signature_check, bypassed_do_signature_check).expect("Could not overload DoSignatureCheck()");
+    //     FPakDoSignatureCheck.enable().expect("Could not enable Pak DoSignatureCheck() bypass");
+    // }
+
+    debug!("[bypass_pak_restriction_check] Disabled asset Pak Signature checks!");
+    Ok(())
 }
 
 pub fn bypass_pak_restriction_check() -> Result<(), Box<dyn std::error::Error>> {
@@ -19,6 +40,37 @@ pub fn bypass_pak_restriction_check() -> Result<(), Box<dyn std::error::Error>> 
     Ok(())
 }
 
+pub fn mount_pak_file(filename: &str, pak_order: u32, in_path: &str, load_index: bool) -> Result<(), Box<dyn std::error::Error>> {
+    let get_platform_file_manager: fn() -> *const UnknownType = unsafe {
+        std::mem::transmute(GameBase::singleton().at_offset(0xfdba60))
+    };
+    let platform_file_manager = (get_platform_file_manager)();
+    println!("Platform File Mgr: {:p}", platform_file_manager);
+
+    let find_platform_file: fn(*const UnknownType, *const U16CStr) -> *const UnknownType = unsafe {
+        std::mem::transmute(GameBase::singleton().at_offset(0xfd9270))
+    };
+
+    let fpak_platform_file = (find_platform_file)(platform_file_manager, u16cstr!("PakFile"));
+    println!("Platform File: {:p}", fpak_platform_file);
+
+    let mount: fn(*const UnknownType, *const U16CStr, u32, *const U16CStr, bool) = unsafe {
+        std::mem::transmute(GameBase::singleton().at_offset(game_base::OFFSETS.asset_funcs.fpakplatformfile_mount))
+    };
+
+    let filename_w = U16CString::from_str(filename).unwrap();
+    let in_path_w = U16CString::from_str(in_path).unwrap();
+    (mount)(fpak_platform_file, filename_w.as_ref(), pak_order, in_path_w.as_ref(), load_index);
+    Ok(())
+}
+
+pub fn register_mount_point(root_path: *const FString, content_path: *const FString) -> Result<(), Box<dyn std::error::Error>> {
+    let register_mount_point: fn(*const FString, *const FString) = unsafe { std::mem::transmute(GameBase::singleton().at_offset(game_base::OFFSETS.asset_funcs.fpackagename_register_mount_point)) };
+
+    (register_mount_point)(root_path, content_path);
+    Ok(())
+}
+
 pub fn force_asset_loads_from_disk() -> Result<(), Box<dyn std::error::Error>> {
     unsafe {
         let fpakfile_find: fn(*const UnknownType, *const FString, *const UnknownType) -> u8 = std::mem::transmute(GameBase::singleton().at_offset(game_base::OFFSETS.asset_funcs.fpakfile_find));
@@ -27,6 +79,14 @@ pub fn force_asset_loads_from_disk() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+fn bypassed_setup_signed_pak_reader(_this: *const UnknownType, reader_archive: *const UnknownType, _filename: *const UnknownType) -> *const UnknownType {
+    reader_archive
+}
+
+fn bypassed_do_signature_check(_was_cancelled: bool, _request: *const UnknownType, _index: i32) {
+    ()
 }
 
 fn bypassed_is_non_pak_filename_allowed(_this: *const UnknownType, _filename: *const FString) -> bool {

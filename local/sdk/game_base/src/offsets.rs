@@ -35,7 +35,10 @@ pub struct AssetFuncOffsets {
     pub asset_manager_is_non_pak_filename_allowed: isize,
     pub asset_manager_scan_path_for_primary_assets: isize,
     pub object_library_load_assets_at_path: isize,
-    pub fpakfile_find: isize
+    pub fpakfile_find: isize,
+    pub fpakfile_setup_signed_pak_reader: isize,
+    pub fpakplatformfile_mount: isize,
+    pub fpackagename_register_mount_point: isize,
 }
 
 impl GameOffsets {
@@ -63,7 +66,10 @@ impl GameOffsets {
                 asset_manager_is_non_pak_filename_allowed: 0x0,
                 asset_manager_scan_path_for_primary_assets: 0x0,
                 object_library_load_assets_at_path: 0x0,
-                fpakfile_find: 0x0
+                fpakfile_find: 0x0,
+                fpakfile_setup_signed_pak_reader: 0x0,
+                fpakplatformfile_mount: 0x0,
+                fpackagename_register_mount_point: 0x0
             },
         }
     }

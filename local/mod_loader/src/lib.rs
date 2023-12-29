@@ -1,4 +1,3 @@
-#![feature(pointer_byte_offsets)]
 use glob::glob;
 use std::path::PathBuf;
 use std::{ffi::c_void, fs, thread};

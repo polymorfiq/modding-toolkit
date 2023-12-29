@@ -1,4 +1,3 @@
-#![feature(pointer_byte_offsets)]
 use std::ffi::c_void;
 
 use game_base::*;
