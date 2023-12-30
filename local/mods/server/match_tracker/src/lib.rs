@@ -45,6 +45,7 @@ fn handle_client(mut stream: TcpStream) {
                 stream.write(format!("WORLD: {:p}\n", WorldProxy::world().expect("No World...")).as_bytes()).expect("Tried to write to TCP Stream");
                 stream.write(format!("LEVEL: {:p}\n", WorldProxy::level().expect("No Level...")).as_bytes()).expect("Tried to write to TCP Stream");
                 stream.write(format!("GAME INSTANCE: {:p}\n", GameInstance::instance().expect("No Game Instance...").base().unwrap()).as_bytes()).expect("Tried to write to TCP Stream");
+                break;
             },
 
             "get_players" => {
@@ -52,9 +53,14 @@ fn handle_client(mut stream: TcpStream) {
                 let json_str = serde_json::to_string(&match_state).unwrap();
 
                 stream.write(json_str.as_bytes()).expect("Tried to write to TCP Stream");
+                stream.write(b"\n").expect("Tried to write to TCP Stream");
+                break;
             },
 
-            msg => println!("Unknown Message: {msg}")
+            msg => {
+                println!("Unknown Message: {msg}");
+                break;
+            }
         }
     }
 }
@@ -68,7 +74,10 @@ fn read_message(stream: &mut TcpStream) -> Result<String, std::string::FromUtf8E
     let mut rx_bytes = [0u8; MESSAGE_SIZE];
     loop {
         // Read from the current data in the TcpStream
-        let bytes_read = stream.read(&mut rx_bytes).expect("Failed to read stream");
+        let bytes_read = stream.read(&mut rx_bytes);
+        if !bytes_read.is_ok() { break };
+        let bytes_read = bytes_read.unwrap();
+
         // let recv_len = received.len();
 
         if rx_bytes == "\n".as_bytes() {
@@ -101,7 +110,8 @@ fn listen_for_connections() {
             Ok(stream) => {
                 thread::spawn(|| {
                     panic::catch_unwind(|| {
-                        handle_client(stream)
+                        handle_client(stream);
+                        println!("Ending TCP Connection...");
                     })
                 });
             },
